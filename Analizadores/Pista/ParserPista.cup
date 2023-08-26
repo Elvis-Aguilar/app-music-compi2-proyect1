@@ -1,0 +1,370 @@
+/*Seccion codigo Imports Package */
+package com.sistema.musicserver.analizadores.pista;
+
+import java_cup.runtime.*;
+import java.util.ArrayList;
+import com.sistema.musicserver.pista.Pista;
+import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+
+
+
+
+ /* Codigo java del parser*/
+ parser code {:   
+
+        private String tempTipo="";
+        private Pista pista;
+
+
+ /* Connect this parser to a scanner!*/
+	public parser(LexerPista analizadorLexico) {
+		super(analizadorLexico);
+	}
+
+       
+  
+
+        public String getTempTipo() {
+                return tempTipo;
+        }
+
+
+        @Override
+        public void syntax_error(Symbol tok) {
+	    try{
+	        Token token = (Token) tok.value;
+	        report_error("Error Sintactico con el  Token:"+ token.getLexeme()+" este no pertenece a la estructura - linea: "+token.getLine()+" - columna: "+token.getColumn() + "\n",null);
+	    }catch(Exception e){
+                e.printStackTrace();
+	    }	
+	}
+
+/**
+    public void unrecovered_syntax_error(Symbol cur_token) {
+        if (cur_token.sym == sym.EOF) {
+             System.out.println("SE ESPERABA UNA LLAVE FINAL");  
+        }else{
+             Token token = (Token) cur_token.value;
+	     report_error("Error Sintactico con el  Token:"+ token.getLexeme()+" este no pertenece a la estructura - linea: "+token.getLine()+" - columna: "+token.getColumn() + "\n",null);
+        }
+    }
+    
+*/
+:};
+
+
+/*seccion de Terminales*/ 
+terminal Token PISTA, ID, EXTIENDE, LLAVEA, LLAVEC, COMA ,PARENTESISA, PARENTESISC, NUM_ENTERO, DECIMAL, CONT_CARACTER, CONT_CADENA,  FALSO, VERDADERO, MAS, MENOS, POR, DIVISION, MODULO, POTENCIA, MAYORQ, MENORQ, MAYOROI, MENOROI, NOTEQUALS, EQUALS, ENTERO, DOBLE, BOOLEAN, CADENA, CARACTER, IGUAL, PUNTOCOMA, VAR, KEEP, ISNULO, MIENTRAS;
+terminal Token OR, XOR, NOR, AND, NAND, NOT, SUMA_IMPLICITA, INCREMENT, DECREMENT, SI, SINO, DOPUNTO, SWITCH, SALIR, CASO, DEFAULT,PARA, HACER, RETORNA, ISNXORULO, CORCHETA, CORCHETC,ARREGLO, ESPERAR, MENSAJE, ORDENAR, LONGITUD, CONTINUAR, PRINCIPAL, SUMARIZAR, REPRODUCIR;
+
+
+
+/*seccion de No Terminales*/
+non terminal inicio, def_pista, comodin_pista, comodin_extiende, items_extiende, sentencias_global, sentencia_global, def_variable, variables, tipo, items_coma, items, asignacion, operation, terminal_casos, asignacion_var, op_incremt_decremet, comodin_fun, parametros, comodin_param, cierre_fun, def_funciones, sentencia, variables_fun, asignacion_var_fun, op_incremt_decremet_fun;
+non terminal items_coma_fun, items_fun, sentencias, terminales_increment, terminales_increment_fun, llamada_metod, parametros_llamada, def_else_if, def_else, def_if, def_if_complete, condition, sentencias_bifuraciones, terminales_switch, sentencias_switch, caso_sw, cases, def_switch, op_incremt_decremet_for, var_iterador, condition_for, def_for, def_while, def_do_while;
+
+/* agregado de precedencias */
+precedence left OR, XOR, NOR;
+precedence left AND, NAND;
+precedence left NOT;
+precedence left EQUALS, NOTEQUALS, MAYORQ, MAYOROI, MENORQ, MENOROI;
+precedence left ISNULO;
+precedence left MENOS, MAS;
+precedence left POR, DIVISION, MODULO;
+precedence left POTENCIA;
+
+/* seccion de Gramatica */
+start with  inicio;
+
+inicio ::= def_pista
+        | 
+        ;
+
+/*Gramatica para definicion de la pista*/
+def_pista ::=  comodin_pista LLAVEA sentencias_global LLAVEC   
+        ;
+
+
+comodin_pista ::= PISTA:pist ID                                 {:pista = new Pista(pist.getLexeme(), new TablaSimbol());:}      
+                | PISTA ID comodin_extiende
+                ;
+
+comodin_extiende ::= EXTIENDE ID items_extiende
+                    ;
+
+items_extiende ::= COMA ID items_extiende
+                |
+                ;
+
+
+/*Gramatica para sentencias, globales o que directamente estan en la clase */
+ sentencias_global ::= sentencia_global sentencias_global
+        |
+        ;
+
+/*Gramatica para sentencia global  */
+ sentencia_global ::=  def_variable
+                    | asignacion_var
+                    | op_incremt_decremet PUNTOCOMA
+                    | def_funciones             
+                    ;
+
+
+/*Gramatica para definir una variable o/y asignarla, de forma global*/
+ def_variable ::=  variables                                                     
+        | KEEP variables                                                     
+        ;
+
+/*Gramatica para variables, asiganion o definicion*/
+ variables ::= VAR tipo items_coma
+        ; 
+
+
+/*Gramatica para  items separadas por comas*/
+ items_coma ::= ID:id items                                     {:pista.tableSimbolGoblal.capturarIds(id.getLexeme()):}                                                                                                            
+            ;
+
+/*Gramatica para asiganar o tener recursividad*/
+ items ::= IGUAL asignacion PUNTOCOMA
+        | COMA items_coma
+        | PUNTOCOMA                                             {::}
+        ; 
+
+
+/*Gramatica para tipo */
+tipo ::= ENTERO: tipo                                   {:tempTipo = tipo.getLexeme();:}                                                                              
+        | DOBLE: tipo                                   {:tempTipo = tipo.getLexeme();:}                                                    
+        | BOOLEAN: tipo                                 {:tempTipo = tipo.getLexeme();:}                                                     
+        | CADENA: tipo                                  {:tempTipo = tipo.getLexeme();:}                                                     
+        | CARACTER: tipo                                {:tempTipo = tipo.getLexeme();:}                                                       
+        ; 
+
+/*gramatica para asiganar variables ya declaradas*/
+asignacion_var ::= ID IGUAL asignacion PUNTOCOMA
+                ;
+
+/*Gramatica para asignacion */
+ asignacion ::= operation                                                      
+            ;
+
+
+/*Gramatica de operacion aritmetica*/
+operation ::= operation MAS operation		 
+	| operation MENOS operation			 
+	| operation POR operation				 
+	| operation DIVISION operation			 
+	| operation MODULO operation			 
+	| operation POTENCIA operation
+        | operation MAYORQ operation
+        | operation MENORQ operation
+        | operation MAYOROI operation
+        | operation MENOROI operation
+        | operation NOTEQUALS operation
+        | operation EQUALS operation
+        | ISNULO operation %prec  ISNULO
+        | NOT operation	%prec NOT		 
+        | operation OR operation
+        | operation AND operation
+        | operation NAND operation
+        | operation NOR operation
+        | operation XOR operation
+        | terminal_casos    													 
+	| PARENTESISA operation:operacion PARENTESISC					
+	;
+
+/*Gramatica para rerminal de los cosso */
+ terminal_casos ::= ID
+                | llamada_metod
+                | NUM_ENTERO
+                | DECIMAL
+                | CONT_CARACTER
+                | CONT_CADENA 
+                | FALSO
+                | VERDADERO
+                ;
+
+
+/*gramatica para operaciones incremet y decremet*/
+op_incremt_decremet ::= ID SUMA_IMPLICITA terminales_increment
+                    | ID INCREMENT
+                    | ID DECREMENT
+                    ;
+
+terminales_increment ::= ID
+                        | NUM_ENTERO
+                        | DECIMAL
+                        ;   
+
+
+/*Gramatica para funciones/procedimientos/metodos*/
+def_funciones  ::= comodin_fun LLAVEA sentencias LLAVEC
+                ;
+
+comodin_fun ::= KEEP tipo ID PARENTESISA cierre_fun
+                | KEEP ID PARENTESISA cierre_fun
+                | tipo ID PARENTESISA cierre_fun
+                | ID PARENTESISA cierre_fun
+                ;
+
+cierre_fun ::= parametros PARENTESISC
+                | PARENTESISC
+                ;
+
+
+/*gramatica para parematros*/
+parametros ::= comodin_param
+            | comodin_param COMA parametros
+            ;
+            
+comodin_param ::= tipo ID           
+                ;
+
+
+/*Gramatica para sentencias, pueden venir dentro de una funcion o metodo */
+ sentencias ::= sentencia sentencias
+        | 
+        ;
+
+/*Gramatica para sentencia, esta puede venir dentro de las funciones o metodos  */
+ sentencia ::=  variables_fun
+        | asignacion_var_fun
+        | op_incremt_decremet_fun PUNTOCOMA
+        | llamada_metod PUNTOCOMA
+        | sentencias_bifuraciones
+        | RETORNA operation PUNTOCOMA
+        ;
+
+/*gramatica para asiganar variables ya declaradas esto dentro de las funciones o metodos*/
+asignacion_var_fun ::= ID IGUAL asignacion PUNTOCOMA
+                    ;
+
+/*Gramatica para definir una variable o/y asignarla, de forma global dentro de funciones*/
+ variables_fun ::= VAR tipo items_coma_fun
+        ; 
+
+
+/*Gramatica para  items separadas por comas*/
+ items_coma_fun ::= ID items_fun                                                          
+            ;
+
+/*Gramatica para asiganar o tener recursividad*/
+ items_fun ::= IGUAL asignacion PUNTOCOMA
+        | COMA items_fun
+        | PUNTOCOMA  
+        ; 
+
+/*gramatica para operaciones incremet y decremet*/
+op_incremt_decremet_fun ::= ID SUMA_IMPLICITA  terminales_increment_fun
+                    | ID INCREMENT
+                    | ID DECREMENT
+                    ;
+
+terminales_increment_fun ::= ID
+                        | NUM_ENTERO
+                        | DECIMAL
+                        ;
+
+
+/*gramatica para llamada de metodos o funciones*/
+llamada_metod ::= ID PARENTESISA  PARENTESISC 
+                | ID PARENTESISA parametros_llamada PARENTESISC 
+                ;
+
+
+/*gramatica para los parametros de las llamadas*/
+parametros_llamada ::= terminal_casos COMA parametros_llamada
+            | terminal_casos
+            ;
+
+/*sentencias de control como if, else, for, while etc*/
+sentencias_bifuraciones ::= def_if_complete
+                        | def_switch
+                        | def_for
+                        | def_while
+                        | def_do_while 
+                        ;
+
+                        
+/*Gramatica para condiciones que evaluaran la bifurcaciones */
+ condition ::= operation                                                      
+            ;
+
+/*definicion de un if, if else, if elseif else*/
+def_if_complete ::= def_if 
+                | def_if def_else
+                | def_if def_else_if
+                ;
+
+/*Gramatica para if  */
+def_if ::= SI PARENTESISA condition  PARENTESISC LLAVEA sentencias LLAVEC 
+        ;
+
+/*Gramatica para ELSE  */
+def_else ::= SINO LLAVEA sentencias LLAVEC 
+                ;
+
+/*Gramatica para ELSE_if  */
+def_else_if ::= SINO def_if
+                | SINO def_if def_else
+                | SINO def_if def_else_if
+                ;
+
+
+/*Gramatica para switch  */
+def_switch ::= SWITCH PARENTESISA ID PARENTESISC LLAVEA cases LLAVEC
+        ;
+
+/*Gramatica para casos dentro del switch  */
+ cases ::= caso_sw SALIR cases
+        |
+        ;
+
+/*Gramatica para casos */
+ caso_sw ::= CASO terminales_switch DOPUNTO sentencias_switch           
+            | DEFAULT DOPUNTO sentencias_switch                  
+            ;
+
+
+sentencias_switch ::= sentencia sentencias_switch
+        | 
+        ;  
+
+terminales_switch ::= ID
+                | NUM_ENTERO
+                | DECIMAL
+                | CONT_CARACTER
+                | CONT_CADENA 
+                | FALSO
+                | VERDADERO
+                ;
+
+
+/*Gramatica para FOR  */
+ def_for ::= PARA PARENTESISA condition_for PARENTESISC  LLAVEA sentencias LLAVEC 
+        ;
+
+/*Gramatica para logica de condidicon del for*/
+ condition_for ::= var_iterador ID PUNTOCOMA condition PUNTOCOMA op_incremt_decremet_for
+            | var_iterador NUM_ENTERO PUNTOCOMA condition PUNTOCOMA op_incremt_decremet_for
+            | var_iterador DECIMAL PUNTOCOMA condition PUNTOCOMA op_incremt_decremet_for
+            ;
+
+
+var_iterador ::= ENTERO ID IGUAL
+            | DOBLE ID IGUAL
+            |
+            ;
+
+op_incremt_decremet_for ::= ID INCREMENT
+                    | ID DECREMENT
+                    ;
+
+
+/*Gramatica para while  */
+def_while ::= MIENTRAS PARENTESISA condition PARENTESISC  LLAVEA sentencias LLAVEC 
+        ;
+
+
+/*Gramatica para do_while  */
+def_do_while ::= HACER LLAVEA sentencias LLAVEC MIENTRAS PARENTESISA condition PARENTESISC PUNTOCOMA
+        ;

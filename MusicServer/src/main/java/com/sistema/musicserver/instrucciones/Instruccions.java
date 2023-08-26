@@ -1,0 +1,22 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.sistema.musicserver.instrucciones;
+
+import com.sistema.musicserver.errors.ErrorSemantico;
+import java.util.ArrayList;
+
+
+
+/**
+ *
+ * @author elvis_agui
+ */
+public abstract class Instruccions {
+    
+    
+    public abstract void execute(ArrayList<ErrorSemantico> errorsSemanticos);
+    
+}
