@@ -44,8 +44,62 @@ public class CasteoOperacion {
             case POTENCIA:
                 datoResult = operacionPotencia();
                 break;
+            case MAYORQ:
+                datoResult = operacionPotencia();
+                break;
         }
         return datoResult;
+    }
+
+    public Dato operacionMayoQ() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        if (this.dato1.getTipoDato() == TipoDato.ENTERO) {
+            if (this.dato2.getTipoDato() == TipoDato.ENTERO) {
+                if (this.dato1.getNumero() > this.dato2.getNumero()) {
+                    datoResult.setTipoDato(TipoDato.BOOLEAN);
+                    datoResult.setBooleano(true);
+                } else {
+                    datoResult.setTipoDato(TipoDato.BOOLEAN);
+                    datoResult.setBooleano(false);
+                }
+                if (this.dato2.getTipoDato() == TipoDato.DECIMAL) {
+                    if (this.dato1.getNumero() > this.dato2.getDecimal()) {
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(true);
+                    } else {
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(false);
+                    }
+                }
+            }
+            
+        }
+        if (this.dato1.getTipoDato() == TipoDato.DECIMAL) {
+            if (this.dato2.getTipoDato() == TipoDato.ENTERO) {
+                if (this.dato1.getDecimal() > this.dato2.getNumero()) {
+                    datoResult.setTipoDato(TipoDato.BOOLEAN);
+                    datoResult.setBooleano(true);
+                } else {
+                    datoResult.setTipoDato(TipoDato.BOOLEAN);
+                    datoResult.setBooleano(false);
+                }
+                if (this.dato2.getTipoDato() == TipoDato.DECIMAL) {
+                    if (this.dato1.getDecimal() > this.dato2.getDecimal()) {
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(true);
+                    } else {
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(false);
+                    }
+                }
+            }
+            
+        }
+        //guardar el error
+        //this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "no de puede restar un valor no numerico - otro valor"));
+
+        return datoResult;
+
     }
 
     public Dato operacionSuma() {

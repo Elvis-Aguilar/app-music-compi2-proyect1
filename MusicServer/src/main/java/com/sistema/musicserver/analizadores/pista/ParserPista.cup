@@ -124,7 +124,7 @@ items_extiende ::= COMA ID items_extiende
         ;
 
 /*Gramatica para variables, asiganion o definicion*/
- variables ::= VAR tipo items_coma:rootOp                                      
+ variables ::= VAR EQUALSipo items_coma                                      
         ; 
 
 
@@ -163,7 +163,7 @@ operation ::= operation:opLeft MAS operation:opRight                            
 	| operation:opLeft DIVISION operation:opRight                                          {:RESULT = new NodoOperation(TipoOperacion.DIVISION, (NodoOperation) opLeft, (NodoOperation) opRight);:}			 
 	| operation:opLeft MODULO operation:opRight                                            {:RESULT = new NodoOperation(TipoOperacion.MODULO, (NodoOperation) opLeft, (NodoOperation) opRight);:}			 
 	| operation:opLeft POTENCIA operation:opRight                                          {:RESULT = new NodoOperation(TipoOperacion.POTENCIA, (NodoOperation) opLeft, (NodoOperation) opRight);:}
-        | operation MAYORQ operation
+        | operation MAYORQ operation                                                            {:RESULT = new NodoOperation(TipoOperacion.MAYORQ, (NodoOperation) opLeft, (NodoOperation) opRight);:}
         | operation MENORQ operation
         | operation MAYOROI operation
         | operation MENOROI operation

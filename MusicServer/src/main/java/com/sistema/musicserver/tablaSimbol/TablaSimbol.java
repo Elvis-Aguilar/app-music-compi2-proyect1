@@ -66,7 +66,6 @@ public class TablaSimbol {
         Dato tmp = new Dato(true, 0, TipoDato.ENTERO);
         boolean encontredo = false;
         for (Variable variable : variables) {
-            System.out.println(variable.toString());
             if (variable.getNombre().equals(token.getLexeme())) {
                 tmp = variable.getDato();
                 encontredo = true;

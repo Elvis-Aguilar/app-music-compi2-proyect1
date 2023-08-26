@@ -6,5 +6,6 @@ public enum TipoOperacion {
     MULTIPLICACION,
     DIVISION,
     MODULO,
-    POTENCIA
+    POTENCIA,
+    MAYORQ
 }

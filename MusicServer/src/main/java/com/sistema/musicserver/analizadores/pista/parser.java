@@ -850,9 +850,6 @@ class CUP$parser$actions {
           case 17: // variables ::= VAR tipo items_coma 
             {
               Object RESULT =null;
-		int rootOpleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int rootOpright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
-		Object rootOp = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("variables",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
