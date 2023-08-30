@@ -1,8 +1,8 @@
 package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 
 import com.sistema.musicserver.errors.ErrorSemantico;
+import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import java.util.ArrayList;
-
 
 public class NodoOperation {
 
@@ -12,14 +12,8 @@ public class NodoOperation {
     private NodoOperation opRight;
     private CasteoOperacion operation;
 
-
-    public NodoOperation(Dato dato, TipoOperacion tipoOperacion) {
-        this.dato = dato;
-        this.tipoOperacion = tipoOperacion;
-        this.opLeft = null;
-        this.opRight = null;
-    }
     
+
     public NodoOperation(Dato dato) {
         this.dato = dato;
         this.tipoOperacion = null;
@@ -32,20 +26,23 @@ public class NodoOperation {
         this.opLeft = opLeft;
         this.opRight = opRight;
     }
-    
-    
 
     /**
      * funcion para ejecutar la operacion post orden
+     *
      * @param errorsSemanticos
-     * @return 
+     * @param tabla
+     * @return
      */
-    public Dato executeOp(ArrayList<ErrorSemantico> errorsSemanticos) {
+    public Dato executeOp(ArrayList<ErrorSemantico> errorsSemanticos, TablaSimbol tabla) {
         if (this.tipoOperacion == null) {
+            if (this.dato.isIsVariable()) {
+                this.dato = tabla.getDato(dato.getToken(), dato.getNombreVar());
+            }
             return this.dato;
         }
-        Dato datoLeft = this.opLeft.executeOp(errorsSemanticos);
-        Dato datoRight = this.opRight.executeOp(errorsSemanticos);
+        Dato datoLeft = this.opLeft.executeOp(errorsSemanticos, tabla);
+        Dato datoRight = this.opRight.executeOp(errorsSemanticos, tabla);
         //funcion que realize la operacion
         operation = new CasteoOperacion(errorsSemanticos);
         return this.operation.resultOp(datoLeft, datoRight, tipoOperacion);
@@ -84,6 +81,8 @@ public class NodoOperation {
     public void setTipoOperacion(TipoOperacion tipoOperacion) {
         this.tipoOperacion = tipoOperacion;
     }
+
+    
 
 //    public void insertSiguineteOp(Dato dato, TipoOperacion tipoOP) {
 //        if (this.siguienteOP == null) {

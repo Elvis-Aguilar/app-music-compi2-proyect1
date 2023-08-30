@@ -6,6 +6,7 @@ import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Asignacion;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
+import com.sistema.musicserver.instrucciones.funciones.Funcion;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import java.util.ArrayList;
 
@@ -15,18 +16,20 @@ public class Pista {
     private TablaSimbol tableSimbolGoblal;
     private ArrayList<Instruccions> instrucciones = new ArrayList<>();
     private ArrayList<ErrorSemantico> errorsSemanticos;
-
+    
+    
     public Pista(String nombre, TablaSimbol tableSimbolGoblal, ArrayList<ErrorSemantico> errorsSemanticos) {
         this.nombre = nombre;
         this.tableSimbolGoblal = tableSimbolGoblal;
         this.errorsSemanticos = errorsSemanticos;
     }
+    
 
     public void carpturarVariablesGlobales(TipoDato tipo, boolean inicializado, Operation op) {
         if (inicializado) {
             int indexI = tableSimbolGoblal.getVariables().size();
             int indexF = indexI + tableSimbolGoblal.getIds().size();
-            Asignacion asig = new Asignacion(indexI, indexF, op, tableSimbolGoblal.getVariables());
+            Asignacion asig = new Asignacion(indexI, indexF, op, tableSimbolGoblal);
 
             this.instrucciones.add(asig);
         }
@@ -40,10 +43,18 @@ public class Pista {
         /*buscar variable en tabla de datos*/
         int index = this.tableSimbolGoblal.varExiste(id);
         if (index != -1) {
-            Asignacion asig = new Asignacion(index, index + 1, op, tableSimbolGoblal.getVariables());
+            Asignacion asig = new Asignacion(index, index + 1, op, tableSimbolGoblal);
             this.instrucciones.add(asig);
 
         }
+    }
+
+    public void referenciarTablasPadres() {
+        this.instrucciones.forEach(inst -> {
+            if (inst instanceof Funcion) {
+                inst.actionReferenciarTabla(tableSimbolGoblal);
+            }
+        });
     }
 
     public void addInstruccion(Instruccions instruccion) {
@@ -86,9 +97,18 @@ public class Pista {
         instrucciones.forEach(instruccione -> {
             instruccione.execute(errorsSemanticos);
         });
-        tableSimbolGoblal.getVariables().forEach(var ->{
+        tableSimbolGoblal.getVariables().forEach(var -> {
             System.out.println(var.toString());
+        });
+        this.errorsSemanticos.forEach(err->{
+            System.out.println(err.getDescripcion()+ err.getToken().getLexeme());
         });
 
     }
+
+//    public void tostringstga(ArrayList<String> arry){
+//        arry.forEach(ar -> {
+//            System.out.println(ar);
+//        });
+//    }
 }

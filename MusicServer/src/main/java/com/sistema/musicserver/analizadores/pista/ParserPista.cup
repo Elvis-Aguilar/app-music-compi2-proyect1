@@ -7,7 +7,10 @@ import com.sistema.musicserver.pista.Pista;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.*;
 import com.sistema.musicserver.errors.ErrorSemantico;
-
+import com.sistema.musicserver.tablaSimbol.Variable;
+import com.sistema.musicserver.instrucciones.funciones.*;
+import com.sistema.musicserver.instrucciones.Instruccions;
+import com.sistema.musicserver.instrucciones.bifurcaciones.*;
 
 
 
@@ -19,6 +22,7 @@ import com.sistema.musicserver.errors.ErrorSemantico;
         private boolean asigna= false;
         private Operation instrOp;
         private ArrayList<ErrorSemantico> errorsSemanticos = new ArrayList<ErrorSemantico>();
+        private ArrayList<Variable> parametros = new ArrayList<Variable>();
 
 
  /* Connect this parser to a scanner!*/
@@ -64,12 +68,11 @@ import com.sistema.musicserver.errors.ErrorSemantico;
 /*seccion de Terminales*/ 
 terminal Token PISTA, ID, EXTIENDE, LLAVEA, LLAVEC, COMA ,PARENTESISA, PARENTESISC, NUM_ENTERO, DECIMAL, CONT_CARACTER, CONT_CADENA,  FALSO, VERDADERO, MAS, MENOS, POR, DIVISION, MODULO, POTENCIA, MAYORQ, MENORQ, MAYOROI, MENOROI, NOTEQUALS, EQUALS, ENTERO, DOBLE, BOOLEAN, CADENA, CARACTER, IGUAL, PUNTOCOMA, VAR, KEEP, ISNULO, MIENTRAS;
 terminal Token OR, XOR, NOR, AND, NAND, NOT, SUMA_IMPLICITA, INCREMENT, DECREMENT, SI, SINO, DOPUNTO, SWITCH, SALIR, CASO, DEFAULT,PARA, HACER, RETORNA, ISNXORULO, CORCHETA, CORCHETC,ARREGLO, ESPERAR, MENSAJE, ORDENAR, LONGITUD, CONTINUAR, PRINCIPAL, SUMARIZAR, REPRODUCIR;
-
-
+ 
 
 /*seccion de No Terminales*/
-non terminal inicio, def_pista, comodin_pista, comodin_extiende, items_extiende, sentencias_global, sentencia_global, def_variable, variables, tipo, items_coma, items, asignacion, operation, terminal_casos, asignacion_var, op_incremt_decremet, comodin_fun, parametros, comodin_param, cierre_fun, def_funciones, sentencia, variables_fun, asignacion_var_fun, op_incremt_decremet_fun;
-non terminal items_coma_fun, items_fun, sentencias, terminales_increment, terminales_increment_fun, llamada_metod, parametros_llamada, def_else_if, def_else, def_if, def_if_complete, condition, sentencias_bifuraciones, terminales_switch, sentencias_switch, caso_sw, cases, def_switch, op_incremt_decremet_for, var_iterador, condition_for, def_for, def_while, def_do_while;
+non terminal inicio, def_pista, comodin_pista, comodin_extiende, items_extiende, sentencias_global, sentencia_global, def_variable, variables, tipo, items_coma, items, asignacion, operation, terminal_casos, asignacion_var, comodin_fun, parametros, comodin_param, cierre_fun, def_funciones, sentencia, variables_fun, asignacion_var_fun, op_incremt_decremet_fun;
+non terminal items_coma_fun, items_fun, sentencias, terminales_increment_fun, llamada_metod, parametros_llamada, def_else_if, def_else, def_if, def_if_complete, condition, sentencias_bifuraciones, terminales_switch, caso_sw, cases, def_switch, op_incremt_decremet_for, var_iterador, condition_for, def_for, def_while, def_do_while, tipo_fun, asignacion_iterador;
 
 /* agregado de precedencias */
 precedence left OR, XOR, NOR;
@@ -89,7 +92,7 @@ inicio ::= def_pista
         ;
 
 /*Gramatica para definicion de la pista*/
-def_pista ::=  comodin_pista LLAVEA sentencias_global LLAVEC                    {:pista.tostringDAts();:}          
+def_pista ::=  comodin_pista LLAVEA sentencias_global LLAVEC                    {:pista.referenciarTablasPadres(); pista.tostringDAts();:}          
         ;
 
 
@@ -113,8 +116,7 @@ items_extiende ::= COMA ID items_extiende
 /*Gramatica para sentencia global  */
  sentencia_global ::=  def_variable
                     | asignacion_var
-                    | op_incremt_decremet PUNTOCOMA
-                    | def_funciones             
+                    | def_funciones:fun                                             {:pista.getInstrucciones().add((Funcion) fun);:}          
                     ;
 
 
@@ -124,18 +126,18 @@ items_extiende ::= COMA ID items_extiende
         ;
 
 /*Gramatica para variables, asiganion o definicion*/
- variables ::= VAR EQUALSipo items_coma                                      
+ variables ::= VAR tipo items_coma                                                                
         ; 
 
 
 /*Gramatica para  items separadas por comas*/
- items_coma ::= ID:id items                                     {:pista.getTableSimbolGoblal().capturarIds((Token) id);:}                                                                                                            
+ items_coma ::= ID:id items                                         {:pista.getTableSimbolGoblal().capturarIds((Token) id);:}                                                                                                                                                
             ;
 
 /*Gramatica para asiganar o tener recursividad*/
- items ::= IGUAL asignacion PUNTOCOMA                                                                           
-        | COMA items_coma
-        | PUNTOCOMA                                             
+ items ::= IGUAL asignacion PUNTOCOMA                                                                       
+        | COMA items_coma                                       
+        | PUNTOCOMA                                                                                                  
         ; 
 
 
@@ -163,7 +165,7 @@ operation ::= operation:opLeft MAS operation:opRight                            
 	| operation:opLeft DIVISION operation:opRight                                          {:RESULT = new NodoOperation(TipoOperacion.DIVISION, (NodoOperation) opLeft, (NodoOperation) opRight);:}			 
 	| operation:opLeft MODULO operation:opRight                                            {:RESULT = new NodoOperation(TipoOperacion.MODULO, (NodoOperation) opLeft, (NodoOperation) opRight);:}			 
 	| operation:opLeft POTENCIA operation:opRight                                          {:RESULT = new NodoOperation(TipoOperacion.POTENCIA, (NodoOperation) opLeft, (NodoOperation) opRight);:}
-        | operation MAYORQ operation                                                            {:RESULT = new NodoOperation(TipoOperacion.MAYORQ, (NodoOperation) opLeft, (NodoOperation) opRight);:}
+        | operation MAYORQ operation
         | operation MENORQ operation
         | operation MAYOROI operation
         | operation MENOROI operation
@@ -181,7 +183,7 @@ operation ::= operation:opLeft MAS operation:opRight                            
 	;
 
 /*Gramatica para rerminal de los cosso */
- terminal_casos ::= ID:val                                              {:RESULT = new NodoOperation(pista.getTableSimbolGoblal().getDato((Token) val));:}                                                 
+ terminal_casos ::= ID:val                                              {:RESULT = new NodoOperation(new Dato(false,(Token) val,TipoDato.ENTERO,val.getLexeme()));:}                                                 
                 | llamada_metod
                 | NUM_ENTERO:val                                        {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.ENTERO));:}            
                 | DECIMAL:val                                           {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.DECIMAL));:}               
@@ -190,33 +192,31 @@ operation ::= operation:opLeft MAS operation:opRight                            
                 | FALSO:val                                             {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.BOOLEAN));:} 
                 | VERDADERO:val                                         {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.BOOLEAN));:}             
                 ;
-
-
-/*gramatica para operaciones incremet y decremet*/
-op_incremt_decremet ::= ID SUMA_IMPLICITA terminales_increment
-                    | ID INCREMENT
-                    | ID DECREMENT
-                    ;
-
-terminales_increment ::= ID
-                        | NUM_ENTERO
-                        | DECIMAL
-                        ;   
+ 
 
 
 /*Gramatica para funciones/procedimientos/metodos*/
-def_funciones  ::= comodin_fun LLAVEA sentencias LLAVEC
+def_funciones  ::= comodin_fun:fun LLAVEA sentencias:sent LLAVEC                    {:Funcion funs = (Funcion) fun; funs.setInstruccions((ArrayList<Instruccions>) sent); parametros.clear(); RESULT = funs; :}
                 ;
 
-comodin_fun ::= KEEP tipo ID PARENTESISA cierre_fun
-                | KEEP ID PARENTESISA cierre_fun
-                | tipo ID PARENTESISA cierre_fun
-                | ID PARENTESISA cierre_fun
+comodin_fun ::= KEEP tipo_fun:tip ID:id PARENTESISA cierre_fun                                  {:RESULT = new Funcion(parametros, new TablaSimbol(errorsSemanticos, true),id.getLexeme(),(Token) id, (TipoDato)tip); :}                                 
+                | KEEP ID:id PARENTESISA cierre_fun                                             {:RESULT = new Funcion(parametros, new TablaSimbol(errorsSemanticos, true),id.getLexeme(),(Token) id); :}                                       
+                | tipo_fun:tip ID:id PARENTESISA cierre_fun                                     {:RESULT = new Funcion(parametros, new TablaSimbol(errorsSemanticos, true),id.getLexeme(),(Token) id, (TipoDato)tip); :}                                      
+                | ID:id PARENTESISA cierre_fun                                                {:RESULT = new Funcion(parametros, new TablaSimbol(errorsSemanticos, true),id.getLexeme(),(Token) id); :}
                 ;
 
 cierre_fun ::= parametros PARENTESISC
                 | PARENTESISC
                 ;
+
+/*Gramatica para tipo de la funcion */
+tipo_fun ::= ENTERO                                     {:RESULT =TipoDato.ENTERO;:}                                                                              
+        | DOBLE                                         {:RESULT =TipoDato.DECIMAL;:}                                                    
+        | BOOLEAN                                       {:RESULT =TipoDato.BOOLEAN;:}                                                     
+        | CADENA                                        {:RESULT =TipoDato.CADENA;:}                                                     
+        | CARACTER                                      {:RESULT =TipoDato.CHAR;:}                                                       
+        ; 
+
 
 
 /*gramatica para parematros*/
@@ -224,52 +224,52 @@ parametros ::= comodin_param
             | comodin_param COMA parametros
             ;
             
-comodin_param ::= tipo ID           
+comodin_param ::= tipo ID:id                                                            {:parametros.add(new Variable((Token)id, tipo, "",false));:}          
                 ;
 
 
 /*Gramatica para sentencias, pueden venir dentro de una funcion o metodo */
- sentencias ::= sentencia sentencias
-        | 
+ sentencias ::= sentencia:sent sentencias:array                                         {: ArrayList<Instruccions> arr= (ArrayList<Instruccions>)array; arr.add(0,(Instruccions)sent); RESULT = arr;:}                                          
+        |                                                                               {:RESULT = new ArrayList<Instruccions>();:}
         ;
 
 /*Gramatica para sentencia, esta puede venir dentro de las funciones o metodos  */
- sentencia ::=  variables_fun
-        | asignacion_var_fun
-        | op_incremt_decremet_fun PUNTOCOMA
+ sentencia ::=  variables_fun:array                                                     {:RESULT = new DeclaracionVar((ArrayList<Variable>)array,asigna,(Operation) instrOp) ;:}
+        | asignacion_var_fun:asig                                                       {:RESULT = asig;:}
+        | op_incremt_decremet_fun:decrInc PUNTOCOMA                                     {:RESULT = decrInc;:}
         | llamada_metod PUNTOCOMA
-        | sentencias_bifuraciones
-        | RETORNA operation PUNTOCOMA
+        | sentencias_bifuraciones:sentbifu                                              {:RESULT = sentbifu;:}
+        | RETORNA:tok operation:op PUNTOCOMA                                            {:RESULT = new SentenciaRetorna((Operation) op, (Token) tok, errorsSemanticos);:}
         ;
 
 /*gramatica para asiganar variables ya declaradas esto dentro de las funciones o metodos*/
-asignacion_var_fun ::= ID IGUAL asignacion PUNTOCOMA
+asignacion_var_fun ::= ID:id IGUAL asignacion:op PUNTOCOMA                              {:RESULT = new Asignacion((Operation)op,(Token)id,true);:}
                     ;
 
 /*Gramatica para definir una variable o/y asignarla, de forma global dentro de funciones*/
- variables_fun ::= VAR tipo items_coma_fun
+ variables_fun ::= VAR tipo items_coma_fun: array                                      {:RESULT  = array;:}
         ; 
 
 
 /*Gramatica para  items separadas por comas*/
- items_coma_fun ::= ID items_fun                                                          
+ items_coma_fun ::= ID:id items_fun:array                                        {:ArrayList<Variable> arryTmp = (ArrayList<Variable>) array; arryTmp.add( new Variable((Token)id,tipo, "", asigna)); RESULT = arryTmp;:}                                                          
             ;
 
 /*Gramatica para asiganar o tener recursividad*/
- items_fun ::= IGUAL asignacion PUNTOCOMA
-        | COMA items_fun
-        | PUNTOCOMA  
+ items_fun ::= IGUAL asignacion PUNTOCOMA                               {:RESULT = new ArrayList<Variable>();:}        
+        | COMA items_coma_fun:array                                     {:RESULT = array;:}
+        | PUNTOCOMA                                                     {:RESULT = new ArrayList<Variable>();:} 
         ; 
 
 /*gramatica para operaciones incremet y decremet*/
-op_incremt_decremet_fun ::= ID SUMA_IMPLICITA  terminales_increment_fun
-                    | ID INCREMENT
-                    | ID DECREMENT
+op_incremt_decremet_fun ::= ID:id SUMA_IMPLICITA  terminales_increment_fun:nodRight                             {:NodoOperation nodLeft = new NodoOperation(new Dato(false, (Token) id, TipoDato.ENTERO, id.getLexeme())); NodoOperation root = new NodoOperation(TipoOperacion.SUMA, nodLeft, (NodoOperation) nodRight ); RESULT = new Asignacion(new Operation(root), (Token) id, true);:}
+                    | ID:id INCREMENT                                                                           {:NodoOperation nodLeft = new NodoOperation(new Dato(false, (Token) id, TipoDato.ENTERO, id.getLexeme())); NodoOperation nodRight = new NodoOperation(new Dato(true, 1, TipoDato.ENTERO)); NodoOperation root = new NodoOperation(TipoOperacion.SUMA, nodLeft, nodRight ); RESULT = new Asignacion(new Operation(root), (Token) id, true);:}
+                    | ID:id DECREMENT                                                                           {:NodoOperation nodLeft = new NodoOperation(new Dato(false, (Token) id, TipoDato.ENTERO, id.getLexeme())); NodoOperation nodRight = new NodoOperation(new Dato(true, 1, TipoDato.ENTERO)); NodoOperation root = new NodoOperation(TipoOperacion.RESTA, nodLeft, nodRight); RESULT = new Asignacion(new Operation(root), (Token) id, true);:}
                     ;
 
-terminales_increment_fun ::= ID
-                        | NUM_ENTERO
-                        | DECIMAL
+terminales_increment_fun ::= ID:val         {:RESULT = new NodoOperation(new Dato(false,(Token) val,TipoDato.ENTERO,val.getLexeme()));:}
+                        | NUM_ENTERO:val    {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.ENTERO));:}
+                        | DECIMAL:val       {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.DECIMAL));:}
                         ;
 
 
@@ -285,94 +285,99 @@ parametros_llamada ::= terminal_casos COMA parametros_llamada
             ;
 
 /*sentencias de control como if, else, for, while etc*/
-sentencias_bifuraciones ::= def_if_complete
-                        | def_switch
-                        | def_for
-                        | def_while
-                        | def_do_while 
+sentencias_bifuraciones ::= def_if_complete:sent     {:RESULT = sent;:}
+                        | def_switch:sent            {:RESULT = sent;:}
+                        | def_for:sent               {:RESULT = sent;:}
+                        | def_while:sent             {:RESULT = sent;:}
+                        | def_do_while:sent          {:RESULT = sent;:} 
                         ;
 
                         
 /*Gramatica para condiciones que evaluaran la bifurcaciones */
- condition ::= operation                                                      
+ condition ::= operation:rootOp                                                                 {:RESULT = new Operation((NodoOperation) rootOp);:}                                                  
             ;
 
 /*definicion de un if, if else, if elseif else*/
-def_if_complete ::= def_if 
-                | def_if def_else
-                | def_if def_else_if
+def_if_complete ::= def_if:senIf                                                                {:RESULT = senIf;:} 
+                | def_if:senIf def_else:senElse                                                 {:SentenciaIF nIf = (SentenciaIF) senIf; nIf.setSentenciaElse((SentenciaElse) senElse); RESULT = nIf;:}
+                | def_if:senIf  def_else_if:senIfs                                              {:SentenciaIF nIf = (SentenciaIF) senIf; nIf.setSentenciaElseIf((SentenciaIF) senIfs); RESULT = nIf;:}
                 ;
 
 /*Gramatica para if  */
-def_if ::= SI PARENTESISA condition  PARENTESISC LLAVEA sentencias LLAVEC 
+def_if ::= SI PARENTESISA condition:op  PARENTESISC LLAVEA sentencias:sent LLAVEC               {:RESULT = new SentenciaIF((ArrayList<Instruccions>) sent,(Operation)op, new TablaSimbol(errorsSemanticos) );:}
         ;
 
 /*Gramatica para ELSE  */
-def_else ::= SINO LLAVEA sentencias LLAVEC 
+def_else ::= SINO LLAVEA sentencias:sent LLAVEC                                                 {:RESULT = new SentenciaElse((ArrayList<Instruccions>) sent, new TablaSimbol(errorsSemanticos) );:}
                 ;
 
 /*Gramatica para ELSE_if  */
-def_else_if ::= SINO def_if
-                | SINO def_if def_else
-                | SINO def_if def_else_if
+def_else_if ::= SINO def_if:senIf                                                               {:RESULT = senIf;:}                                                                               
+                | SINO def_if:senIf def_else:senElse                                            {:SentenciaIF nIf = (SentenciaIF) senIf; nIf.setSentenciaElse((SentenciaElse) senElse); RESULT = nIf;:}                                                                    
+                | SINO def_if:senIf  def_else_if:senIfs                                         {:SentenciaIF nIf = (SentenciaIF) senIf; nIf.setSentenciaElseIf((SentenciaIF) senIfs); RESULT = nIf;:}                                                                                     
                 ;
 
 
 /*Gramatica para switch  */
-def_switch ::= SWITCH PARENTESISA ID PARENTESISC LLAVEA cases LLAVEC
+def_switch ::= SWITCH PARENTESISA ID:id PARENTESISC LLAVEA cases:arryC LLAVEC                            {:RESULT = new SentenciaSwitch((ArrayList<CasoSwitch> ) arryC, new Variable((Token) id, TipoDato.ENTERO, "",false),  new TablaSimbol(errorsSemanticos));:}
         ;
 
 /*Gramatica para casos dentro del switch  */
- cases ::= caso_sw SALIR cases
-        |
+ cases ::= caso_sw:cass SALIR cases:arryC                                                               {:ArrayList<CasoSwitch> arr = (ArrayList<CasoSwitch>)arryC; arr.add(0,(CasoSwitch)cass); RESULT = arr;:}
+        |                                                                                               {:RESULT = new ArrayList<CasoSwitch>(); :}
         ;
 
 /*Gramatica para casos */
- caso_sw ::= CASO terminales_switch DOPUNTO sentencias_switch           
-            | DEFAULT DOPUNTO sentencias_switch                  
+ caso_sw ::= CASO terminales_switch:dat DOPUNTO sentencias:inst                                 {:RESULT = new CasoSwitch((ArrayList<Instruccions>)inst,(Dato) dat);:}         
+            | DEFAULT DOPUNTO sentencias:inst                                                   {:RESULT = new CasoSwitch((ArrayList<Instruccions>)inst,null);:}             
             ;
 
 
-sentencias_switch ::= sentencia sentencias_switch
-        | 
-        ;  
 
-terminales_switch ::= ID
-                | NUM_ENTERO
-                | DECIMAL
-                | CONT_CARACTER
-                | CONT_CADENA 
-                | FALSO
-                | VERDADERO
+terminales_switch ::= ID:val                                    {:RESULT = new Dato(false, (Token) val, TipoDato.ENTERO, val.getLexeme());;:}        
+                | NUM_ENTERO:val                                {:RESULT = new Dato(true, (Token) val, TipoDato.ENTERO);:}                                                           
+                | DECIMAL:val                                   {:RESULT = new Dato(true, (Token) val, TipoDato.DECIMAL);:}                                                 
+                | CONT_CARACTER:val                             {:RESULT = new Dato(true, (Token) val, TipoDato.CADENA);:}                                                     
+                | CONT_CADENA:val                               {:RESULT = new Dato(true, (Token) val, TipoDato.CHAR);:}                                                         
+                | FALSO:val                                     {:RESULT = new Dato(true, (Token) val, TipoDato.BOOLEAN);:}                                                     
+                | VERDADERO:val                                 {:RESULT = new Dato(true, (Token) val, TipoDato.BOOLEAN);:}                                                     
                 ;
 
 
 /*Gramatica para FOR  */
- def_for ::= PARA PARENTESISA condition_for PARENTESISC  LLAVEA sentencias LLAVEC 
+ def_for ::= PARA PARENTESISA condition_for:fors PARENTESISC  LLAVEA sentencias:instr LLAVEC                          {:SentenciaFor senFor = (SentenciaFor)fors; senFor.setInstruccions((ArrayList<Instruccions>) instr); RESULT = senFor;:}
         ;
 
 /*Gramatica para logica de condidicon del for*/
- condition_for ::= var_iterador ID PUNTOCOMA condition PUNTOCOMA op_incremt_decremet_for
-            | var_iterador NUM_ENTERO PUNTOCOMA condition PUNTOCOMA op_incremt_decremet_for
-            | var_iterador DECIMAL PUNTOCOMA condition PUNTOCOMA op_incremt_decremet_for
+ condition_for ::= var_iterador:inst PUNTOCOMA condition:condi PUNTOCOMA op_incremt_decremet_for:increm                  {:RESULT = new SentenciaFor((Instruccions)inst,  new TablaSimbol(errorsSemanticos), (Asignacion)increm, (Operation) condi);:}
             ;
 
 
-var_iterador ::= ENTERO ID IGUAL
-            | DOBLE ID IGUAL
-            |
+var_iterador ::= ENTERO ID:id  asignacion_iterador:op                 {: ArrayList<Variable> variables= new ArrayList<Variable>(); variables.add(new Variable((Token ) id, TipoDato.ENTERO, "", true)); RESULT = new DeclaracionVar(variables, true, (Operation)op);:}
+            | DOBLE ID:id  asignacion_iterador:op                     {: ArrayList<Variable> variables= new ArrayList<Variable>(); variables.add(new Variable((Token ) id, TipoDato.DECIMAL, "", true)); RESULT = new DeclaracionVar(variables, true, (Operation)op);:}
+            | ID:id  asignacion_iterador:op                           {:RESULT = new Asignacion((Operation) op, (Token) id, true);:}
             ;
 
-op_incremt_decremet_for ::= ID INCREMENT
-                    | ID DECREMENT
+asignacion_iterador ::= IGUAL ID:val                        {:RESULT = new Operation(new Dato(false,(Token) val,TipoDato.ENTERO,val.getLexeme()));:}
+                |  IGUAL NUM_ENTERO:val                     {:RESULT = new Operation(new Dato(true,(Token) val,TipoDato.ENTERO));:}          
+                | IGUAL DECIMAL:val                         {:RESULT = new Operation(new Dato(true,(Token) val,TipoDato.DECIMAL));:}  
+                ;
+
+
+op_incremt_decremet_for ::= ID:id INCREMENT                        {:NodoOperation nodLeft = new NodoOperation(new Dato(false, (Token) id, TipoDato.ENTERO, id.getLexeme())); NodoOperation nodRight = new NodoOperation(new Dato(true, 1, TipoDato.ENTERO)); NodoOperation root = new NodoOperation(TipoOperacion.SUMA, nodLeft, nodRight ); RESULT = new Asignacion(new Operation(root), (Token) id, true);:}
+                    | ID:id DECREMENT                              {:NodoOperation nodLeft = new NodoOperation(new Dato(false, (Token) id, TipoDato.ENTERO, id.getLexeme())); NodoOperation nodRight = new NodoOperation(new Dato(true, 1, TipoDato.ENTERO)); NodoOperation root = new NodoOperation(TipoOperacion.RESTA, nodLeft, nodRight); RESULT = new Asignacion(new Operation(root), (Token) id, true);:}
                     ;
 
 
 /*Gramatica para while  */
-def_while ::= MIENTRAS PARENTESISA condition PARENTESISC  LLAVEA sentencias LLAVEC 
+def_while ::= MIENTRAS PARENTESISA condition:cond PARENTESISC  LLAVEA sentencias:sent LLAVEC                                            {:RESULT = new SentenciaWhile((ArrayList<Instruccions> )sent, (Operation) cond, new TablaSimbol(errorsSemanticos));:}               
         ;
 
 
 /*Gramatica para do_while  */
-def_do_while ::= HACER LLAVEA sentencias LLAVEC MIENTRAS PARENTESISA condition PARENTESISC PUNTOCOMA
+def_do_while ::= HACER LLAVEA sentencias:sent LLAVEC MIENTRAS PARENTESISA condition:cond PARENTESISC PUNTOCOMA                            {:RESULT = new SentenciaDoWhile((ArrayList<Instruccions> )sent, (Operation) cond, new TablaSimbol(errorsSemanticos));:}          
         ;
+
+
+
+        

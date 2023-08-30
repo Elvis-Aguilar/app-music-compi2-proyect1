@@ -1,6 +1,7 @@
 package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 
 import com.sistema.musicserver.errors.ErrorSemantico;
+import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import java.util.ArrayList;
 
 /**
@@ -9,8 +10,8 @@ import java.util.ArrayList;
 public class Operation {
     private NodoOperation rootOperation;
 
-    public Operation(Dato dato, TipoOperacion tipoOp){
-        this.rootOperation = new NodoOperation(dato, tipoOp);
+    public Operation(Dato dato){
+        this.rootOperation = new NodoOperation(dato);
     }
 
     public Operation(NodoOperation rootOperation) {
@@ -22,8 +23,8 @@ public class Operation {
     }
 
 
-    public Dato execute(ArrayList<ErrorSemantico> errorsSemanticos){
-        Dato temp =rootOperation.executeOp(errorsSemanticos); 
+    public Dato execute(ArrayList<ErrorSemantico> errorsSemanticos, TablaSimbol tabla){
+        Dato temp =rootOperation.executeOp(errorsSemanticos, tabla); 
         return temp;
     }
 

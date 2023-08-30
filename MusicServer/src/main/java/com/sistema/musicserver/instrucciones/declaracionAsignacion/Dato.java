@@ -13,8 +13,9 @@ public class Dato {
     private int numero = 0;
     private char caracter;
     private boolean booleano;
-    private int inedexVariabla;
     private Token token;
+    private String nombreVar = "";
+    private boolean isVariable;
 
     private boolean inicializado;
 
@@ -33,14 +34,27 @@ public class Dato {
         this.inicializado = inicializado;
         this.numero = entero;
         this.tipoDato = tipo;
+        this.token = new Token(0, 0);
     }
 
     public Dato(boolean inicializado, Token token, TipoDato tipo) {
         this.inicializado = inicializado;
         this.tipoDato = tipo;
+        this.token = token;
         if (token != null) {
             this.convertirDato(token.getLexeme());
         }
+    }
+
+    public Dato(boolean inicializado, Token token, TipoDato tipo, String nombVar) {
+        this.inicializado = inicializado;
+        this.tipoDato = tipo;
+        this.token = token;
+        this.nombreVar = nombVar;
+        if (token != null) {
+            this.convertirDato(token.getLexeme());
+        }
+        this.isVariable = true;
     }
 
     private void convertirDato(String yytext) {
@@ -60,14 +74,14 @@ public class Dato {
             } catch (NumberFormatException e) {
                 this.decimal = 0;
             }
-                break;
+            break;
             default:
                 try {
-                    this.numero = Integer.parseInt(yytext);
-                } catch (NumberFormatException e) {
-                    this.decimal = 0;
-                }
-                break;
+                this.numero = Integer.parseInt(yytext);
+            } catch (NumberFormatException e) {
+                this.numero = 0;
+            }
+            break;
         }
     }
 
@@ -112,12 +126,12 @@ public class Dato {
         this.booleano = booleano;
     }
 
-    public int getInedexVariabla() {
-        return inedexVariabla;
+    public String getNombreVar() {
+        return nombreVar;
     }
 
-    public void setInedexVariabla(int inedexVariabla) {
-        this.inedexVariabla = inedexVariabla;
+    public void setNombreVar(String nombreVar) {
+        this.nombreVar = nombreVar;
     }
 
     public boolean isInicializado() {
@@ -143,14 +157,20 @@ public class Dato {
     public void setToken(Token token) {
         this.token = token;
     }
+
+    public boolean isIsVariable() {
+        return isVariable;
+    }
+
+    public void setIsVariable(boolean isVariable) {
+        this.isVariable = isVariable;
+    }
     
     
 
     @Override
     public String toString() {
-        return "Dato{" + "cadena=" + cadena + ", decimal=" + decimal + ", numero=" + numero + ", caracter=" + caracter + ", booleano=" + booleano + ", inedexVariabla=" + inedexVariabla + ", inicializado=" + inicializado + ", tipoDato=" + tipoDato + '}';
+        return "Dato{" + "cadena=" + cadena + ", decimal=" + decimal + ", numero=" + numero + ", caracter=" + caracter + ", booleano=" + booleano + ", token=" + token + ", nombreVar=" + nombreVar + ", inicializado=" + inicializado + ", tipoDato=" + tipoDato + '}';
     }
-    
-    
 
 }

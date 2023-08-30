@@ -1,0 +1,20 @@
+Pista algo {
+    var entero algo, otro = 2+5*7-1;
+    var cadena cade = "hola mundo "+algo;
+    otro = 5;
+    var boolean conditi = verdadero;
+    algo (){
+        var cadena cades = "hola Elvis";
+        var cadena cadess = "Adios Elvis";
+        si(conditi) {
+            cade = cades;
+            algo = 5;
+            algo++;
+        } sino {
+            cade = cadess;
+            algo = 28;
+        }
+    }
+}
+
+            

@@ -198,7 +198,7 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 {ARREGLO}               { return symbol(sym.ARREGLO,yytext());}
 {ID}                   { return symbol(sym.ID,yytext());}
 {COMMET}                { /*return symbol(sym.COMMET,yytext());*/}
-{COMILLAS}              {yybegin(CADE);}
+{COMILLAS}              {cadena = ""; yybegin(CADE);}
 
 
 }

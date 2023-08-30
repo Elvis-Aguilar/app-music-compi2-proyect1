@@ -22,8 +22,9 @@ public class CasteoOperacion {
         this.dato1 = datoLeft;
         this.dato2 = datoRight;
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        datoResult.setToken(dato2.getToken());
         if (!this.datoInicializado()) {
-            return new Dato(true, 0, TipoDato.ENTERO);
+            return datoResult;
         }
         switch (tipoOp) {
             case SUMA:
@@ -45,13 +46,13 @@ public class CasteoOperacion {
                 datoResult = operacionPotencia();
                 break;
             case MAYORQ:
-                datoResult = operacionPotencia();
+                datoResult = operacionMayoQ();
                 break;
         }
         return datoResult;
     }
 
-    public Dato operacionMayoQ() {
+    private Dato operacionMayoQ() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         if (this.dato1.getTipoDato() == TipoDato.ENTERO) {
             if (this.dato2.getTipoDato() == TipoDato.ENTERO) {
