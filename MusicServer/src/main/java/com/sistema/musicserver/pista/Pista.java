@@ -4,10 +4,13 @@ import com.sistema.musicserver.analizadores.pista.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Asignacion;
+import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
+import com.sistema.musicserver.instrucciones.funciones.FunMensaje;
 import com.sistema.musicserver.instrucciones.funciones.Funcion;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import com.sistema.musicserver.tablaSimbol.Variable;
 import java.util.ArrayList;
 
 public class Pista {
@@ -16,14 +19,14 @@ public class Pista {
     private TablaSimbol tableSimbolGoblal;
     private ArrayList<Instruccions> instrucciones = new ArrayList<>();
     private ArrayList<ErrorSemantico> errorsSemanticos;
-    
-    
+    private ArrayList<Funcion> funciones = new ArrayList<>();
+    private Funcion funPrincipal;
+
     public Pista(String nombre, TablaSimbol tableSimbolGoblal, ArrayList<ErrorSemantico> errorsSemanticos) {
         this.nombre = nombre;
         this.tableSimbolGoblal = tableSimbolGoblal;
         this.errorsSemanticos = errorsSemanticos;
     }
-    
 
     public void carpturarVariablesGlobales(TipoDato tipo, boolean inicializado, Operation op) {
         if (inicializado) {
@@ -49,12 +52,51 @@ public class Pista {
         }
     }
 
-    public void referenciarTablasPadres() {
-        this.instrucciones.forEach(inst -> {
-            if (inst instanceof Funcion) {
-                inst.actionReferenciarTabla(tableSimbolGoblal);
+    public Funcion getFuncionEspecifica(Token id, ArrayList<Dato> parametros, boolean conRetorno) {
+        Funcion fun = null;
+        for (Funcion funcion : funciones) {
+            if (!id.getLexeme().equals(funcion.getNombre())) {
+                continue;
             }
+            if (conRetorno && null == funcion.getTipoRetono()) {
+                continue;
+            }
+            if (funcion.getParametros().size() != parametros.size()) {
+                continue;
+            }
+            if (comprobarTipos(parametros, funcion.getParametros(), id)) {
+                fun = funcion;
+                break;
+            }
+
+        }
+        if (null == fun) {
+            this.errorsSemanticos.add(new ErrorSemantico(id, "Funcion no encontrada, posibles errores, parametro incorrectos, nombre incorrecto, el tipo de retorno o no declarada"));
+        }
+
+        return fun;
+    }
+
+    public boolean comprobarTipos(ArrayList<Dato> parametros, ArrayList<Variable> varParametros, Token id) {
+        boolean conciden = true;
+        int index = 0;
+        for (Variable varParametro : varParametros) {
+            if (varParametro.getTipo() != parametros.get(index).getTipoDato()) {
+                conciden = false;
+                break;
+            }
+            varParametro.setDato(parametros.get(index), errorsSemanticos);
+            index++;
+        }
+        return conciden;
+    }
+
+    public void referenciarTablasPadres() {
+        this.funciones.forEach(fun -> {
+            fun.actionReferenciarTabla(tableSimbolGoblal);
         });
+        this.funPrincipal.actionReferenciarTabla(tableSimbolGoblal);
+
     }
 
     public void addInstruccion(Instruccions instruccion) {
@@ -93,15 +135,38 @@ public class Pista {
         this.errorsSemanticos = errorsSemanticos;
     }
 
+    public ArrayList<Funcion> getFunciones() {
+        return funciones;
+    }
+
+    public void setFunciones(ArrayList<Funcion> funciones) {
+        this.funciones = funciones;
+    }
+
+    public Funcion getFunPrincipal() {
+        return funPrincipal;
+    }
+
+    public void setFunPrincipal(Funcion funPrincipal) {
+        this.funPrincipal = funPrincipal;
+    }
+    
+    
+
     public void tostringDAts() {
         instrucciones.forEach(instruccione -> {
             instruccione.execute(errorsSemanticos);
         });
+        //TODO: verificar si fun Principal existe
+        this.funPrincipal.execute(errorsSemanticos);
         tableSimbolGoblal.getVariables().forEach(var -> {
             System.out.println(var.toString());
         });
-        this.errorsSemanticos.forEach(err->{
-            System.out.println(err.getDescripcion()+ err.getToken().getLexeme());
+        FunMensaje.getInstanceMensajes().getMensajes().forEach(ms ->{
+            System.out.println(ms);
+        });
+        this.errorsSemanticos.forEach(err -> {
+            System.out.println(err.getDescripcion() + err.getToken().getLexeme());
         });
 
     }

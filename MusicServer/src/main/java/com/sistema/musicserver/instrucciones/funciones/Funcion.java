@@ -20,7 +20,6 @@ public class Funcion extends Instruccions {
     private Token token;
     private ArrayList<Instruccions> instruccions;
     private TipoDato tipoRetono = null;
-    
 
     public Funcion(ArrayList<Variable> parametros, TablaSimbol tableSimbol, String nombre, Token token, TipoDato tipoRetono) {
         this.parametros = parametros;
@@ -40,15 +39,26 @@ public class Funcion extends Instruccions {
         this.token = token;
         this.agregarParametroATableSimbol();
     }
+    
+    public Funcion(ArrayList<Variable> parametros, TablaSimbol tableSimbol, String nombre, Token token,ArrayList<Instruccions> instruccions) {
+        this.parametros = parametros;
+        this.tableSimbol = tableSimbol;
+        this.nombre = nombre;
+        this.token = token;
+        this.instruccions = instruccions;
+        this.agregarParametroATableSimbol();
+    }
 
     @Override
     public void execute(ArrayList<ErrorSemantico> errorsSemanticos) {
         for (Instruccions instruccion : instruccions) {
+            instruccion.execute(errorsSemanticos);
             if (instruccion instanceof SentenciaRetorna) {
-                instruccion.execute(errorsSemanticos);
+                if (this.tipoRetono == null) {
+                    errorsSemanticos.add(new ErrorSemantico(token, "Funcion no tiene definido tipo de retono (void), sentencia retorno no pertenece al funcionamiento de la funcion"));
+                }
                 break;
             }
-            instruccion.execute(errorsSemanticos);
         }
     }
 
@@ -65,8 +75,8 @@ public class Funcion extends Instruccions {
             this.tableSimbol.getVariables().add(para);
         });
     }
-    
-    private void agregarVarRetornoATableSimbol(){
+
+    private void agregarVarRetornoATableSimbol() {
         this.tableSimbol.getVariables().add(new Variable(token, tipoRetono, "varRetonoSimbolTable", false));
     }
 

@@ -23,6 +23,7 @@ import com.sistema.musicserver.instrucciones.bifurcaciones.*;
         private Operation instrOp;
         private ArrayList<ErrorSemantico> errorsSemanticos = new ArrayList<ErrorSemantico>();
         private ArrayList<Variable> parametros = new ArrayList<Variable>();
+        private ArrayList<Dato> parametroLllmada = new ArrayList<>();
 
 
  /* Connect this parser to a scanner!*/
@@ -68,11 +69,14 @@ import com.sistema.musicserver.instrucciones.bifurcaciones.*;
 /*seccion de Terminales*/ 
 terminal Token PISTA, ID, EXTIENDE, LLAVEA, LLAVEC, COMA ,PARENTESISA, PARENTESISC, NUM_ENTERO, DECIMAL, CONT_CARACTER, CONT_CADENA,  FALSO, VERDADERO, MAS, MENOS, POR, DIVISION, MODULO, POTENCIA, MAYORQ, MENORQ, MAYOROI, MENOROI, NOTEQUALS, EQUALS, ENTERO, DOBLE, BOOLEAN, CADENA, CARACTER, IGUAL, PUNTOCOMA, VAR, KEEP, ISNULO, MIENTRAS;
 terminal Token OR, XOR, NOR, AND, NAND, NOT, SUMA_IMPLICITA, INCREMENT, DECREMENT, SI, SINO, DOPUNTO, SWITCH, SALIR, CASO, DEFAULT,PARA, HACER, RETORNA, ISNXORULO, CORCHETA, CORCHETC,ARREGLO, ESPERAR, MENSAJE, ORDENAR, LONGITUD, CONTINUAR, PRINCIPAL, SUMARIZAR, REPRODUCIR;
- 
+terminal Token NOTA_DO, NOTA_DO_S, NOTA_RE, NOTA_RE_S, NOTA_MI, NOTA_FA, NOTA_FA_S, NOTA_SOL, NOTA_SOL_S, NOTA_LA, NOTA_LA_S, NOTA_SI;  
+
+
 
 /*seccion de No Terminales*/
 non terminal inicio, def_pista, comodin_pista, comodin_extiende, items_extiende, sentencias_global, sentencia_global, def_variable, variables, tipo, items_coma, items, asignacion, operation, terminal_casos, asignacion_var, comodin_fun, parametros, comodin_param, cierre_fun, def_funciones, sentencia, variables_fun, asignacion_var_fun, op_incremt_decremet_fun;
 non terminal items_coma_fun, items_fun, sentencias, terminales_increment_fun, llamada_metod, parametros_llamada, def_else_if, def_else, def_if, def_if_complete, condition, sentencias_bifuraciones, terminales_switch, caso_sw, cases, def_switch, op_incremt_decremet_for, var_iterador, condition_for, def_for, def_while, def_do_while, tipo_fun, asignacion_iterador;
+non terminal terminal_casos_param, def_fun_principal, fun_mensaje, def_fun_reproducir, def_nota_musical, def_sentencias_repro, def_fun_esperar;
 
 /* agregado de precedencias */
 precedence left OR, XOR, NOR;
@@ -116,7 +120,8 @@ items_extiende ::= COMA ID items_extiende
 /*Gramatica para sentencia global  */
  sentencia_global ::=  def_variable
                     | asignacion_var
-                    | def_funciones:fun                                             {:pista.getInstrucciones().add((Funcion) fun);:}          
+                    | def_funciones:fun                                             {:pista.getFunciones().add((Funcion) fun);:}          
+                    | def_fun_principal:funPrin                                     {:pista.setFunPrincipal((Funcion) funPrin); :}                                          
                     ;
 
 
@@ -184,7 +189,7 @@ operation ::= operation:opLeft MAS operation:opRight                            
 
 /*Gramatica para rerminal de los cosso */
  terminal_casos ::= ID:val                                              {:RESULT = new NodoOperation(new Dato(false,(Token) val,TipoDato.ENTERO,val.getLexeme()));:}                                                 
-                | llamada_metod
+                | llamada_metod:nodFun                                  {: parametroLllmada.clear(); RESULT = nodFun;:}
                 | NUM_ENTERO:val                                        {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.ENTERO));:}            
                 | DECIMAL:val                                           {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.DECIMAL));:}               
                 | CONT_CARACTER:val                                     {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.CHAR));:}         
@@ -237,9 +242,12 @@ comodin_param ::= tipo ID:id                                                    
  sentencia ::=  variables_fun:array                                                     {:RESULT = new DeclaracionVar((ArrayList<Variable>)array,asigna,(Operation) instrOp) ;:}
         | asignacion_var_fun:asig                                                       {:RESULT = asig;:}
         | op_incremt_decremet_fun:decrInc PUNTOCOMA                                     {:RESULT = decrInc;:}
-        | llamada_metod PUNTOCOMA
+        | llamada_metod:metod PUNTOCOMA                                                 {: parametroLllmada.clear(); RESULT = new LlamadaFuncion((NodoOperation) metod);:}
         | sentencias_bifuraciones:sentbifu                                              {:RESULT = sentbifu;:}
         | RETORNA:tok operation:op PUNTOCOMA                                            {:RESULT = new SentenciaRetorna((Operation) op, (Token) tok, errorsSemanticos);:}
+        | fun_mensaje:funMjs                                                            {:RESULT = funMjs;:}
+        | def_fun_reproducir
+        | def_fun_esperar
         ;
 
 /*gramatica para asiganar variables ya declaradas esto dentro de las funciones o metodos*/
@@ -274,15 +282,25 @@ terminales_increment_fun ::= ID:val         {:RESULT = new NodoOperation(new Dat
 
 
 /*gramatica para llamada de metodos o funciones*/
-llamada_metod ::= ID PARENTESISA  PARENTESISC 
-                | ID PARENTESISA parametros_llamada PARENTESISC 
+llamada_metod ::= ID:id PARENTESISA parametros_llamada PARENTESISC                 {:RESULT = new NodoOperation((Token) id, parametroLllmada,pista);:} 
                 ;
 
 
 /*gramatica para los parametros de las llamadas*/
-parametros_llamada ::= terminal_casos COMA parametros_llamada
-            | terminal_casos
+parametros_llamada ::= terminal_casos_param COMA parametros_llamada     
+            | terminal_casos_param                                      
+            |                                                            
             ;
+
+/*Gramatica para los terminales de los parametros de funciones */
+ terminal_casos_param ::= ID:val                                        {: parametroLllmada.add(new Dato(false,(Token) val,TipoDato.ENTERO,val.getLexeme()));:}                                                 
+                | NUM_ENTERO:val                                        {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.ENTERO));:}            
+                | DECIMAL:val                                           {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.DECIMAL));:}               
+                | CONT_CARACTER:val                                     {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.CHAR));:}         
+                | CONT_CADENA:val                                       {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.CADENA));:}           
+                | FALSO:val                                             {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.BOOLEAN));:} 
+                | VERDADERO:val                                         {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.BOOLEAN));:}             
+                ;
 
 /*sentencias de control como if, else, for, while etc*/
 sentencias_bifuraciones ::= def_if_complete:sent     {:RESULT = sent;:}
@@ -379,5 +397,40 @@ def_do_while ::= HACER LLAVEA sentencias:sent LLAVEC MIENTRAS PARENTESISA condit
         ;
 
 
+/******apartado para gramaticas nativas del lenguaje*****/
 
-        
+
+/*funcion mensaje, equivalente a imprimir por consola*/
+fun_mensaje ::= MENSAJE PARENTESISA asignacion:rootOp PARENTESISC PUNTOCOMA             {:RESULT = new Mensaje((Operation) rootOp);:}
+                ;
+
+
+/*Gramatica para la funcion principal, funcion llamada pra todas las acciones*/
+def_fun_principal ::= PRINCIPAL:id PARENTESISA PARENTESISC  LLAVEA sentencias:inst LLAVEC   {:RESULT = new Funcion(parametros, new TablaSimbol(errorsSemanticos, true),id.getLexeme(),(Token) id, (ArrayList<Instruccions>) inst); :}    
+                ;
+
+/*Gramatica para funcion nativa Reproducir*/
+def_fun_reproducir ::= REPRODUCIR PARENTESISA def_sentencias_repro  PARENTESISC PUNTOCOMA 
+                ;
+
+def_sentencias_repro ::= def_nota_musical COMA asignacion  COMA asignacion  COMA asignacion
+                ;
+
+/*Gramatica para representacion de las notas musicales*/
+def_nota_musical ::= NOTA_DO                                 
+                | NOTA_DO_S                                   
+                | NOTA_RE                                  
+                | NOTA_RE_S                                   
+                | NOTA_MI                                    
+                | NOTA_FA                                         
+                | NOTA_FA_S                                   
+                | NOTA_SOL                                  
+                | NOTA_SOL_S                                  
+                | NOTA_LA                                    
+                | NOTA_LA_S                                  
+                | NOTA_SI 
+                ;
+
+/*gramatica para representacion de funcion esperar*/
+def_fun_esperar ::= ESPERAR PARENTESISA asignacion  COMA asignacion PARENTESISC PUNTOCOMA
+                ;

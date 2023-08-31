@@ -1,20 +1,62 @@
-Pista algo {
+Pista algo1 {
     var entero algo, otro = 2+5*7-1;
     var cadena cade = "hola mundo "+algo;
     otro = 5;
     var boolean conditi = verdadero;
+    Principal() {
+        algo();
+    }
     algo (){
         var cadena cades = "hola Elvis";
         var cadena cadess = "Adios Elvis";
+        Mensaje("la sentencia es: "+ conditi +"  por lo tanto; ");
         si(conditi) {
             cade = cades;
             algo = 5;
             algo++;
+            Mensaje(cade);
         } sino {
+
             cade = cadess;
             algo = 28;
+            Mensaje(cade);
+        }
+    }
+} 
+instrucciones.ejecutar
+listaPista.add algo1
+
+
+Pista algo2 extender algo1 {
+    //algo2.tablaSimbol.add algo1.tablaSimbol
+    //algo2.funciones.add algo1.funciones
+
+    var entero algo, otro = 2+5*7-1;
+    var cadena cade = "hola mundo "+algo;
+    otro = 5;
+    var boolean conditi = verdadero;
+    Principal() {
+        algo();
+    }
+    algo (){
+        var cadena cades = "hola Elvis";
+        var cadena cadess = "Adios Elvis";
+        Mensaje("la sentencia es: "+ conditi +"  por lo tanto; ");
+        si(conditi) {
+            cade = cades;
+            algo = 5;
+            algo++;
+            Mensaje(cade);
+        } sino {
+
+            cade = cadess;
+            algo = 28;
+            Mensaje(cade);
         }
     }
 }
 
-            
+instrucciones.ejecutar
+listaPista.add algo2
+   
+         

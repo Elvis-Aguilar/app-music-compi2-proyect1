@@ -1,6 +1,9 @@
 package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 
+import com.sistema.musicserver.analizadores.pista.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
+import com.sistema.musicserver.instrucciones.funciones.Funcion;
+import com.sistema.musicserver.pista.Pista;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import java.util.ArrayList;
 
@@ -11,8 +14,19 @@ public class NodoOperation {
     private NodoOperation opLeft;
     private NodoOperation opRight;
     private CasteoOperacion operation;
+    private boolean funcion = false;
+    private Token tokenFun;
+    private ArrayList<Dato> parametros;
+    private Pista pista;
+    private boolean retorna = true;
 
-    
+    public NodoOperation(Token tokenFun, ArrayList<Dato> parametros, Pista pista) {
+        this.tokenFun = tokenFun;
+        this.pista = pista;
+        this.funcion = true;
+        this.dato = new Dato(false, 0, TipoDato.ENTERO);
+        this.capturarParametros(parametros);
+    }
 
     public NodoOperation(Dato dato) {
         this.dato = dato;
@@ -35,6 +49,17 @@ public class NodoOperation {
      * @return
      */
     public Dato executeOp(ArrayList<ErrorSemantico> errorsSemanticos, TablaSimbol tabla) {
+        if (funcion) {
+            Funcion fun = pista.getFuncionEspecifica(tokenFun, parametros, retorna);
+            if (fun != null) {
+                fun.execute(errorsSemanticos);
+                if (!fun.getTableSimbol().getVariables().isEmpty()) {
+                    this.dato = fun.getTableSimbol().getVariables().get(0).getDato();
+                }
+            }
+            return this.dato;
+        }
+
         if (this.tipoOperacion == null) {
             if (this.dato.isIsVariable()) {
                 this.dato = tabla.getDato(dato.getToken(), dato.getNombreVar());
@@ -47,6 +72,13 @@ public class NodoOperation {
         operation = new CasteoOperacion(errorsSemanticos);
         return this.operation.resultOp(datoLeft, datoRight, tipoOperacion);
 
+    }
+    
+    private void capturarParametros(ArrayList<Dato> parameRecibidos){
+        this.parametros = new ArrayList<>();
+        parameRecibidos.forEach(para ->{
+            this.parametros.add(para);
+        });
     }
 
     /*apartado para getter y setters*/
@@ -82,8 +114,6 @@ public class NodoOperation {
         this.tipoOperacion = tipoOperacion;
     }
 
-    
-
 //    public void insertSiguineteOp(Dato dato, TipoOperacion tipoOP) {
 //        if (this.siguienteOP == null) {
 //            this.siguienteOP = new NodoOperation(dato, tipoOP);
@@ -92,4 +122,53 @@ public class NodoOperation {
 //        }
 //
 //    }
+    public CasteoOperacion getOperation() {
+        return operation;
+    }
+
+    public void setOperation(CasteoOperacion operation) {
+        this.operation = operation;
+    }
+
+    public boolean isFuncion() {
+        return funcion;
+    }
+
+    public void setFuncion(boolean funcion) {
+        this.funcion = funcion;
+    }
+
+    public Token getTokenFun() {
+        return tokenFun;
+    }
+
+    public void setTokenFun(Token tokenFun) {
+        this.tokenFun = tokenFun;
+    }
+
+    public ArrayList<Dato> getParametros() {
+        return parametros;
+    }
+
+    public void setParametros(ArrayList<Dato> parametros) {
+        this.parametros = parametros;
+    }
+
+    public Pista getPista() {
+        return pista;
+    }
+
+    public void setPista(Pista pista) {
+        this.pista = pista;
+    }
+
+    public boolean isRetorna() {
+        return retorna;
+    }
+
+    public void setRetorna(boolean retorna) {
+        this.retorna = retorna;
+    }
+    
+    
 }
