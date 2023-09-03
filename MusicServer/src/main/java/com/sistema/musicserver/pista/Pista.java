@@ -5,6 +5,7 @@ import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Asignacion;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
+import com.sistema.musicserver.instrucciones.declaracionAsignacion.ManejadorArreglos;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import com.sistema.musicserver.instrucciones.funciones.FunMensaje;
@@ -21,6 +22,7 @@ public class Pista {
     private ArrayList<ErrorSemantico> errorsSemanticos;
     private ArrayList<Funcion> funciones = new ArrayList<>();
     private Funcion funPrincipal;
+    private int sizeArray = 0;
 
     public Pista(String nombre, TablaSimbol tableSimbolGoblal, ArrayList<ErrorSemantico> errorsSemanticos) {
         this.nombre = nombre;
@@ -40,6 +42,21 @@ public class Pista {
 
         tableSimbolGoblal.getIds().clear();
     }
+
+    public void capturarArregloGlobales(TipoDato tipo, int dimensionesDecla, int dimesionesAsign, ArrayList<Operation> operations) {
+        if (dimensionesDecla > 2) {
+            this.errorsSemanticos.add(new ErrorSemantico(this.tableSimbolGoblal.getIds().get(0), "Los arreglos inizializados solo perminte ser de dos dimensiones [][]"));
+        }
+        int indexI = this.tableSimbolGoblal.getArreglos().size();
+        int indexF = indexI + tableSimbolGoblal.getIds().size();
+        Asignacion asig = new Asignacion(indexI, indexF, tableSimbolGoblal, operations);
+        this.instrucciones.add(asig);
+        this.tableSimbolGoblal.capturarArreglos(tipo, dimensionesDecla, this.sizeArray, dimesionesAsign);
+        tableSimbolGoblal.getIds().clear();
+        this.sizeArray = 0;
+    }
+
+ 
 
     //TODO: incorporar la logica de la busquda de esta variable en el resto de tablas que vaya a extender
     public void capturarAsignacion(Token id, Operation op) {
@@ -95,8 +112,38 @@ public class Pista {
         this.funciones.forEach(fun -> {
             fun.actionReferenciarTabla(tableSimbolGoblal);
         });
-        this.funPrincipal.actionReferenciarTabla(tableSimbolGoblal);
+        if (this.funPrincipal != null) {
+            this.funPrincipal.actionReferenciarTabla(tableSimbolGoblal);
+        }
 
+    }
+
+    /**
+     * funcion encargada de unir ambos array, comprobando si son del mismo
+     * tamanio
+     *
+     * @param operations1
+     * @param operations2
+     * @param token
+     * @return
+     */
+    public ArrayList<Operation> unirOperaciones(ArrayList<Operation> operations1, ArrayList<Operation> operations2, Token token) {
+        if (this.sizeArray == 0) {
+            this.sizeArray = operations1.size();
+        }
+        if (this.sizeArray != operations1.size()) {
+
+            this.errorsSemanticos.add(new ErrorSemantico(token, "No cumple con los estandares de inicializacion de arreglos, los campos no son del mismo tamaño"));
+        }
+        operations1.addAll(operations2);
+        return operations1;
+    }
+
+    /*funcion que captura un arreglo sin inicializar var entero arreglo algo[2][1+2];*/
+    public void captruarDeclaracionArreglo(TipoDato tipoArreglo, ArrayList<Operation> operaciones) {
+        ManejadorArreglos manejador = new ManejadorArreglos(tipoArreglo, this.tableSimbolGoblal, operaciones, this.tableSimbolGoblal.getIds());
+        this.instrucciones.add(manejador);
+        this.tableSimbolGoblal.getIds().clear();
     }
 
     public void addInstruccion(Instruccions instruccion) {
@@ -150,8 +197,14 @@ public class Pista {
     public void setFunPrincipal(Funcion funPrincipal) {
         this.funPrincipal = funPrincipal;
     }
-    
-    
+
+    public int getSizeArray() {
+        return sizeArray;
+    }
+
+    public void setSizeArray(int sizeArray) {
+        this.sizeArray = sizeArray;
+    }
 
     public void tostringDAts() {
         instrucciones.forEach(instruccione -> {
@@ -159,10 +212,13 @@ public class Pista {
         });
         //TODO: verificar si fun Principal existe
         this.funPrincipal.execute(errorsSemanticos);
-        tableSimbolGoblal.getVariables().forEach(var -> {
-            System.out.println(var.toString());
+//        tableSimbolGoblal.getVariables().forEach(var -> {
+//            System.out.println(var.toString());
+//        });
+        this.tableSimbolGoblal.getArreglos().forEach(arr -> {
+            System.out.println(arr.toString());
         });
-        FunMensaje.getInstanceMensajes().getMensajes().forEach(ms ->{
+        FunMensaje.getInstanceMensajes().getMensajes().forEach(ms -> {
             System.out.println(ms);
         });
         this.errorsSemanticos.forEach(err -> {

@@ -2,6 +2,7 @@ package com.sistema.musicserver.tablaSimbol;
 
 import com.sistema.musicserver.analizadores.pista.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
+import com.sistema.musicserver.instrucciones.declaracionAsignacion.Arreglo;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 
@@ -15,6 +16,7 @@ public class TablaSimbol {
     private TablaSimbol tablaSimbolHijo;
     private TablaSimbol tablaSimbolPadre;
     private boolean isFuncion;
+    private ArrayList<Arreglo> arreglos = new ArrayList<>();
 
     public TablaSimbol(ArrayList<ErrorSemantico> erros) {
         this.erros = erros;
@@ -33,6 +35,13 @@ public class TablaSimbol {
         });
     }
 
+    public void capturarArreglos(TipoDato tipo, int dimensionesDecla, int maxIndice, int maxIndiceFila) {
+        ids.forEach(id -> {
+            Arreglo arreglo = new Arreglo(id, tipo, dimensionesDecla, maxIndice,maxIndiceFila);
+            this.arreglos.add(arreglo);
+        });
+    }
+
     public void capturarIds(Token id) {
         boolean capturar = true;
         if (this.ids.isEmpty()) {
@@ -41,12 +50,55 @@ public class TablaSimbol {
             for (Token tok : ids) {
                 if (tok.getLexeme().equals(id.getLexeme())) {
                     //error semantico, variable ya declarada antes
-                    this.erros.add(new ErrorSemantico(id, "variable ya declarada antes"));
+                    this.erros.add(new ErrorSemantico(id, "Se esta declarando dos veces la misma variabla"));
                     capturar = false;
                     break;
                 }
             }
             if (capturar && !this.varYaDeclarada(id)) {
+                this.ids.add(id);
+            }
+
+        }
+
+    }
+
+    public void capturarIdsFun(Token id) {
+        boolean capturar = true;
+        if (this.ids.isEmpty()) {
+            ids.add(id);
+        } else {
+            for (Token tok : ids) {
+                if (tok.getLexeme().equals(id.getLexeme())) {
+                    //error semantico, variable ya declarada antes
+                    this.erros.add(new ErrorSemantico(id, "Se esta declarando dos veces la misma variabla"));
+                    capturar = false;
+                    break;
+                }
+            }
+            if (capturar) {
+                this.ids.add(id);
+            }
+
+        }
+
+    }
+
+    /*funcion para corroborar los arrglos*/
+    public void capturarIdsArr(Token id) {
+        boolean capturar = true;
+        if (this.ids.isEmpty()) {
+            ids.add(id);
+        } else {
+            for (Token tok : ids) {
+                if (tok.getLexeme().equals(id.getLexeme())) {
+                    //error semantico, variable ya declarada antes
+                    this.erros.add(new ErrorSemantico(id, "Se esta declarando dos veces el mismo arreglo"));
+                    capturar = false;
+                    break;
+                }
+            }
+            if (capturar && !this.arregloYaDeclarado(id)) {
                 this.ids.add(id);
             }
 
@@ -126,6 +178,31 @@ public class TablaSimbol {
         }
     }
 
+    public void asignacionValorArray(Dato dato, Token id, int dimension, ArrayList<Integer> indices) {
+        boolean encontrado = false;
+        for (Arreglo arreglo : arreglos) {
+            if (arreglo.getToken().getLexeme().equals(id.getLexeme())) {
+                if (dimension != arreglo.getDimension()) {
+                    this.erros.add(new ErrorSemantico(id, "La Dimension del arreglo no conside, puede que tenga mas [] o menos[]"));
+                }else{
+                    if (arreglo.indicesValido(indices, erros, id)) {
+                        arreglo.capturarValor(dato, id, indices, this.erros);
+                    }
+                }
+                encontrado = true;
+                break;
+            }
+        }
+        if (!encontrado) {
+            if (null == this.tablaSimbolPadre) {
+                //reportar error
+                this.erros.add(new ErrorSemantico(id, "Variable no declarada"));
+            } else {
+                this.tablaSimbolPadre.asignacionValorArray(dato, id, dimension, indices);
+            }
+        }
+    }
+
     /**
      * funcion que verifica si esta variable ya existe en la tabla de simbolos
      *
@@ -147,6 +224,21 @@ public class TablaSimbol {
         return repti;
     }
 
+    public boolean arregloYaDeclarado(Token id) {
+        boolean repti = false;
+        for (Arreglo arreglo : arreglos) {
+            if (arreglo.getToken().getLexeme().equals(id.getLexeme())) {
+                repti = true;
+                this.erros.add(new ErrorSemantico(id, " Arreglo ya declarada antes"));
+                break;
+            }
+        }
+        if (!repti && null != this.tablaSimbolPadre && !this.isFuncion) {
+            repti = this.tablaSimbolPadre.arregloYaDeclarado(id);
+        }
+        return repti;
+    }
+
     public boolean buscarRetorno(String nomVar) {
         boolean repti = false;
         if (isFuncion) {
@@ -156,10 +248,38 @@ public class TablaSimbol {
                     break;
                 }
             }
-        }else{
-            repti =this.tablaSimbolPadre.buscarRetorno(nomVar);
+        } else {
+            repti = this.tablaSimbolPadre.buscarRetorno(nomVar);
         }
         return repti;
+    }
+    
+    
+    
+    public Dato getDatoArreglo(Dato dato) {
+        Dato tmp = new Dato(true, 0, TipoDato.ENTERO);
+        boolean encontredo = false;
+        if (null != dato.getToken()) {
+            for (Arreglo arreglo : arreglos) {
+                if (arreglo.getToken().getLexeme().equals(dato.getToken().getLexeme())) {
+                    ArrayList<Integer> indeces = dato.getIndices(erros, this);
+                    if (arreglo.indicesValido(indeces, erros, dato.getToken())) {
+                        tmp = arreglo.getDatoEspecifico(erros, indeces);
+                    }                    
+                    encontredo = true;
+                    break;
+                }
+            }
+        }
+        if (!encontredo) {
+            if (null == this.tablaSimbolPadre) {
+                //reportar error
+                this.erros.add(new ErrorSemantico(dato.getToken(), "Variable no declarada"));
+            } else {
+                tmp = this.tablaSimbolPadre.getDatoArreglo(dato);
+            }
+        }
+        return tmp;
     }
 
     /*espacio para getters y setters*/
@@ -209,6 +329,14 @@ public class TablaSimbol {
 
     public void setIsFuncion(boolean isFuncion) {
         this.isFuncion = isFuncion;
+    }
+
+    public ArrayList<Arreglo> getArreglos() {
+        return arreglos;
+    }
+
+    public void setArreglos(ArrayList<Arreglo> arreglos) {
+        this.arreglos = arreglos;
     }
 
 }

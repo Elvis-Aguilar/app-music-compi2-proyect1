@@ -16,7 +16,7 @@ public class DeclaracionVar extends Instruccions {
 
     private ArrayList<Variable> variables;
     private TablaSimbol tableSimbol;
-    private boolean asignacion;
+    private boolean asignacion; // var entero algo = 0;
     private Asignacion asig;
     private Operation op;
 
@@ -47,10 +47,7 @@ public class DeclaracionVar extends Instruccions {
             this.asig.execute(errorsSemanticos);
         }
     }
-    
-    
-    
-    
+
     /*getter and setters*/
     public ArrayList<Variable> getVariables() {
         return variables;

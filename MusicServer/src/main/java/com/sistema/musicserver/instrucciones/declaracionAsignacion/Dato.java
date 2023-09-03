@@ -1,6 +1,9 @@
 package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 
 import com.sistema.musicserver.analizadores.pista.Token;
+import com.sistema.musicserver.errors.ErrorSemantico;
+import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.util.ArrayList;
 
 /**
  * clase para representar un dato primitivo como: numero, cadena etc, asi mismo
@@ -16,10 +19,10 @@ public class Dato {
     private Token token;
     private String nombreVar = "";
     private boolean isVariable;
-
     private boolean inicializado;
-
     private TipoDato tipoDato = TipoDato.ENTERO;
+    private boolean isVarArreglo = false;
+    private ArrayList<Operation> operaciones;
 
     public Dato(boolean inicializado, TipoDato tipoDato) {
         this.inicializado = inicializado;
@@ -57,6 +60,17 @@ public class Dato {
         this.isVariable = true;
     }
 
+    public Dato(boolean inicializado, Token token, TipoDato tipo, ArrayList<Operation> operaciones) {
+        this.inicializado = inicializado;
+        this.tipoDato = tipo;
+        this.token = token;
+        this.operaciones = operaciones;
+        if (token != null) {
+            this.convertirDato(token.getLexeme());
+        }
+        this.isVarArreglo = true;
+    }
+
     private void convertirDato(String yytext) {
         switch (this.tipoDato) {
             case CADENA:
@@ -83,6 +97,26 @@ public class Dato {
             }
             break;
         }
+    }
+
+    public ArrayList<Integer> getIndices(ArrayList<ErrorSemantico> erros, TablaSimbol tabla) {
+        ArrayList<Integer> indices = new ArrayList<>();
+        for (Operation operacione : operaciones) {
+            Dato tmp = operacione.execute(erros, tabla);
+            if (tmp.getTipoDato() != TipoDato.ENTERO) {
+                erros.add(new ErrorSemantico(token, "Los indices Deben ser de tipo entero, uno o varios indices no cumplen las restricciones"));
+                indices.add(1);
+            } else {
+                if (tmp.getNumero() < 0) {
+                    erros.add(new ErrorSemantico(token, "Los indices Deben ser de mayores a 0, uno o varios indices no cumplen las restricciones"));
+                    indices.add(1);
+                }else{
+                    indices.add(tmp.getNumero());
+                }
+            }
+        }
+
+        return indices;
     }
 
     /*espacio para getters y settesrs*/
@@ -165,8 +199,14 @@ public class Dato {
     public void setIsVariable(boolean isVariable) {
         this.isVariable = isVariable;
     }
-    
-    
+
+    public boolean isIsVarArreglo() {
+        return isVarArreglo;
+    }
+
+    public void setIsVarArreglo(boolean isVarArreglo) {
+        this.isVarArreglo = isVarArreglo;
+    }
 
     @Override
     public String toString() {

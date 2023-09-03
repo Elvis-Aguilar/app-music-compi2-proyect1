@@ -64,6 +64,9 @@ public class NodoOperation {
             if (this.dato.isIsVariable()) {
                 this.dato = tabla.getDato(dato.getToken(), dato.getNombreVar());
             }
+            if (this.dato.isIsVarArreglo()) {
+                this.dato = tabla.getDatoArreglo(dato);
+            }
             return this.dato;
         }
         Dato datoLeft = this.opLeft.executeOp(errorsSemanticos, tabla);

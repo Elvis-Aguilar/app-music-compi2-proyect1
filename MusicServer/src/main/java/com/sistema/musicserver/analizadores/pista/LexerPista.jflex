@@ -68,6 +68,8 @@ MODULO = "%"
 POTENCIA = "^"
 
 
+
+
 /*palabras reservadas*/
 PISTA = "pista"|"Pista"
 KEEP = "keep"|"Keep"
@@ -99,7 +101,8 @@ ORDENAR = "ordenar"|"Ordenar"
 SUMARIZAR = "sumarizar"|"Sumarizar"
 LONGITUD = "longitud"|"Longitud"
 MENSAJE = "mensaje"|"Mensaje"
-PRINCIPAL = "principal"|"Principal"
+PRINCIPAL = "principal"|"Principal"  
+
 NOTA_DO = "Do"                                    
 NOTA_DO_S = "Do#"                                   
 NOTA_RE = "Re"                                  
@@ -111,8 +114,9 @@ NOTA_SOL = "Sol"
 NOTA_SOL_S = "Sol#"                                  
 NOTA_LA = "La"                                    
 NOTA_LA_S = "La#"                                  
-NOTA_SI = "Si"                                    
-ID = (({LETRA}|{DIGONALB})({LETRA}|{ENTERO}|{DIGONALB})*)
+
+
+ID = (({LETRA}|{DIGONALB})({LETRA}|{NUM_ENTERO}|{DIGONALB})*)
 
 
 /*apartado para comentarios*/
@@ -169,7 +173,7 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 {AND}                   { return symbol(sym.AND,yytext());}
 {NAND}                  { return symbol(sym.NAND,yytext());}
 {NOR}                   { return symbol(sym.NOR,yytext());}
-{XOR}                   { return symbol(sym.ISNXORULO,yytext());}
+{XOR}                   { return symbol(sym.XOR,yytext());}
 {POR}                   { return symbol(sym.POR,yytext());}
 {DIVISION}              { return symbol(sym.DIVISION,yytext());}
 {MENOS}                 { return symbol(sym.MENOS,yytext());}
@@ -208,21 +212,21 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 {PRINCIPAL}             { return symbol(sym.PRINCIPAL,yytext());}
 {DOPUNTO}               { return symbol(sym.DOPUNTO,yytext());}
 {ARREGLO}               { return symbol(sym.ARREGLO,yytext());}
-{ID}                    { return symbol(sym.ID,yytext());}
+{NOTA_DO}              {return symbol(sym.NOTA_DO,yytext());}                                  
+{NOTA_DO_S}            {return symbol(sym.NOTA_DO_S,yytext());}                                  
+{NOTA_RE}              {return symbol(sym.NOTA_RE,yytext());}                                
+{NOTA_RE_S}            {return symbol(sym.NOTA_RE_S,yytext());}                                  
+{NOTA_MI}             {return symbol(sym.NOTA_MI,yytext());}                                  
+{NOTA_FA}              {return symbol(sym.NOTA_FA,yytext());}                                  
+{NOTA_FA_S}            {return symbol(sym.NOTA_FA_S,yytext());}                                  
+{NOTA_SOL}             {return symbol(sym.NOTA_SOL,yytext());}                                 
+{NOTA_SOL_S}           {return symbol(sym.NOTA_SOL_S,yytext());}                                  
+{NOTA_LA}              {return symbol(sym.NOTA_LA,yytext());}                                  
+{NOTA_LA_S}            {return symbol(sym.NOTA_LA_S,yytext());}                                 
 {COMMET}                { /*return symbol(sym.COMMET,yytext());*/}
+{ID}                    { return symbol(sym.ID,yytext());}
 {COMILLAS}              {cadena = ""; yybegin(CADE);}
-{NOTA_DO} =             {return symbol(sym.NOTA_DO,yytext());}                                  
-{NOTA_DO_S} =           {return symbol(sym.NOTA_DO_S,yytext());}                                  
-{NOTA_RE} =             {return symbol(sym.NOTA_RE,yytext());}                                
-{NOTA_RE_S} =           {return symbol(sym.NOTA_RE_S,yytext());}                                  
-{NOTA_MI} =             {return symbol(sym.NOTA_MI,yytext());}                                  
-{NOTA_FA} =             {return symbol(sym.NOTA_FA,yytext());}                                  
-{NOTA_FA_S} =           {return symbol(sym.NOTA_FA_S,yytext());}                                  
-{NOTA_SOL} =            {return symbol(sym.NOTA_SOL,yytext());}                                 
-{NOTA_SOL_S} =          {return symbol(sym.NOTA_SOL_S,yytext());}                                  
-{NOTA_LA} =             {return symbol(sym.NOTA_LA,yytext());}                                  
-{NOTA_LA_S} =           {return symbol(sym.NOTA_LA_S,yytext());}                                 
-{NOTA_SI} =             {return symbol(sym.NOTA_SI,yytext());}
+
 }
 
 <CADE>{
