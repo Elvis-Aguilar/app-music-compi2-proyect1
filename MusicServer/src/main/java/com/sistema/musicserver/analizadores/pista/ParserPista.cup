@@ -71,15 +71,14 @@ import com.sistema.musicserver.instrucciones.bifurcaciones.*;
 /*seccion de Terminales*/ 
 terminal Token PISTA, ID, EXTIENDE, LLAVEA, LLAVEC, COMA ,PARENTESISA, PARENTESISC, NUM_ENTERO, DECIMAL, CONT_CARACTER, CONT_CADENA,  FALSO, VERDADERO, MAS, MENOS, POR, DIVISION, MODULO, POTENCIA, MAYORQ, MENORQ, MAYOROI, MENOROI, NOTEQUALS, EQUALS, ENTERO, DOBLE, BOOLEAN, CADENA, CARACTER, IGUAL, PUNTOCOMA, VAR, KEEP, ISNULO, MIENTRAS;
 terminal Token OR, XOR, NOR, AND, NAND, NOT, SUMA_IMPLICITA, INCREMENT, DECREMENT, SI, SINO, DOPUNTO, SWITCH, SALIR, CASO, DEFAULT,PARA, HACER, RETORNA, CORCHETA, CORCHETC,ARREGLO, ESPERAR, MENSAJE, ORDENAR, LONGITUD, CONTINUAR, PRINCIPAL, SUMARIZAR, REPRODUCIR;
-terminal Token NOTA_DO, NOTA_DO_S, NOTA_RE, NOTA_RE_S, NOTA_MI, NOTA_FA, NOTA_FA_S, NOTA_SOL, NOTA_SOL_S, NOTA_LA, NOTA_LA_S;  
-
+terminal Token NOTA_DO, NOTA_DO_S, NOTA_RE, NOTA_RE_S, NOTA_MI, NOTA_FA, NOTA_FA_S, NOTA_SOL, NOTA_SOL_S, NOTA_LA, NOTA_LA_S, ASCENDENTE, DESCENDENTE, PARES, IMPARES, PRIMOS;
 
 
 /*seccion de No Terminales*/
 non terminal inicio, def_pista, comodin_pista, comodin_extiende, items_extiende, sentencias_global, sentencia_global, def_variable, variables, tipo, items_coma, items, asignacion, operation, terminal_casos, asignacion_var, comodin_fun, parametros, comodin_param, cierre_fun, def_funciones, sentencia, variables_fun, asignacion_var_fun, op_incremt_decremet_fun;
 non terminal items_coma_fun, items_fun, sentencias, terminales_increment_fun, llamada_metod, parametros_llamada, def_else_if, def_else, def_if, def_if_complete, condition, sentencias_bifuraciones, terminales_switch, caso_sw, cases, def_switch, op_incremt_decremet_for, var_iterador, condition_for, def_for, def_while, def_do_while, tipo_fun, asignacion_iterador;
 non terminal terminal_casos_param, def_fun_principal, fun_mensaje, def_fun_reproducir, def_nota_musical, def_sentencias_repro, def_fun_esperar, asignaciones_recursivas, varios_dimensiones, asignacion_arreglo, def_sin_dimens, def_dimension_arreglo, def_tipo_arreglo, def_fun_arreglo, ids, decla_array_inicializado, ids_fun, def_tipo_arreglo_fun, decla_arry, asig_arreglo;
-non terminal valor_arreglo;
+non terminal valor_arreglo, def_fun_ordenar, formaOrdenar, comodin_pista_recu;
 
 /* agregado de precedencias */
 precedence left OR, XOR, NOR;
@@ -94,9 +93,14 @@ precedence left POTENCIA;
 /* seccion de Gramatica */
 start with  inicio;
 
-inicio ::= def_pista
+inicio ::= comodin_pista_recu 
         | 
         ;
+
+/*comodin para que la gramatica sera recursiva y acepte varias pistas*/
+comodin_pista_recu ::= def_pista comodin_pista_recu
+                | def_pista
+                ;
 
 /*Gramatica para definicion de la pista*/
 def_pista ::=  comodin_pista LLAVEA sentencias_global LLAVEC                    {:pista.referenciarTablasPadres(); pista.tostringDAts();:}          
@@ -249,13 +253,14 @@ comodin_param ::= tipo ID:id                                                    
         | op_incremt_decremet_fun:decrInc PUNTOCOMA                                     {:RESULT = decrInc;:}
         | llamada_metod:metod PUNTOCOMA                                                 {: parametroLllmada.clear(); RESULT = new LlamadaFuncion((NodoOperation) metod);:}
         | sentencias_bifuraciones:sentbifu                                              {:RESULT = sentbifu;:}
-        | RETORNA:tok operation:op PUNTOCOMA                                            {:RESULT = new SentenciaRetorna((Operation) op, (Token) tok, errorsSemanticos);:}
+        | RETORNA:tok asignacion:op PUNTOCOMA                                            {:RESULT = new SentenciaRetorna((Operation) op, (Token) tok, errorsSemanticos);:}
         | fun_mensaje:funMjs                                                            {:RESULT = funMjs;:}
         | def_fun_reproducir
         | def_fun_esperar
         | decla_array_inicializado:arreglo                                              {:pista.setSizeArray(0); cont = 0; contDimes = 0; pista.getTableSimbolGoblal().getIds().clear(); RESULT = arreglo;:}
         | decla_arry:arreglo                                                            {:pista.setSizeArray(0); cont = 0; contDimes = 0; pista.getTableSimbolGoblal().getIds().clear(); RESULT = arreglo;:}
         | asig_arreglo:asig                                                             {:RESULT = asig;:}
+        | def_fun_ordenar
         ;
 
 /*gramatica para asiganar variables ya declaradas esto dentro de las funciones o metodos*/
@@ -301,8 +306,7 @@ parametros_llamada ::= terminal_casos_param COMA parametros_llamada
             ;
 
 /*Gramatica para los terminales de los parametros de funciones */
- terminal_casos_param ::= ID:val                                        {: parametroLllmada.add(new Dato(false,(Token) val,TipoDato.ENTERO,val.getLexeme()));:}                                                 
-                | NUM_ENTERO:val                                        {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.ENTERO));:}            
+ terminal_casos_param ::= NUM_ENTERO:val                                        {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.ENTERO));:}            
                 | DECIMAL:val                                           {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.DECIMAL));:}               
                 | CONT_CARACTER:val                                     {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.CHAR));:}         
                 | CONT_CADENA:val                                       {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.CADENA));:}           
@@ -505,4 +509,13 @@ asig_arreglo ::= ID:id CORCHETA def_dimension_arreglo:arr IGUAL asignacion:rootO
 valor_arreglo ::= ID:id  CORCHETA def_dimension_arreglo:arr                       {:RESULT = new NodoOperation(new Dato(false,(Token) id,TipoDato.ENTERO, (ArrayList<Operation>) arr));:}
                 ;
 
+/*Gramatica para Oredenar*/
+def_fun_ordenar ::= ORDENAR PARENTESISA ID COMA formaOrdenar PARENTESISC PUNTOCOMA
+                ;
 
+formaOrdenar ::= ASCENDENTE
+        | DESCENDENTE
+        | PARES
+        | IMPARES
+        | PRIMOS
+        ;

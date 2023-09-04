@@ -19,6 +19,7 @@ public class NodoOperation {
     private ArrayList<Dato> parametros;
     private Pista pista;
     private boolean retorna = true;
+    private boolean isOrdenar;
 
     public NodoOperation(Token tokenFun, ArrayList<Dato> parametros, Pista pista) {
         this.tokenFun = tokenFun;
@@ -49,25 +50,29 @@ public class NodoOperation {
      * @return
      */
     public Dato executeOp(ArrayList<ErrorSemantico> errorsSemanticos, TablaSimbol tabla) {
+        Dato tmp = this.dato;
         if (funcion) {
             Funcion fun = pista.getFuncionEspecifica(tokenFun, parametros, retorna);
             if (fun != null) {
                 fun.execute(errorsSemanticos);
                 if (!fun.getTableSimbol().getVariables().isEmpty()) {
-                    this.dato = fun.getTableSimbol().getVariables().get(0).getDato();
+                    tmp.setInicializado(true);
+                    tmp.setValorDato(fun.getTableSimbol().getVariables().get(0).getDato());
+                    
                 }
             }
-            return this.dato;
+            return tmp;
         }
-
         if (this.tipoOperacion == null) {
             if (this.dato.isIsVariable()) {
-                this.dato = tabla.getDato(dato.getToken(), dato.getNombreVar());
+                tmp.setInicializado(true);
+                tmp.setValorDato(tabla.getDato(dato.getToken(), dato.getNombreVar()));
             }
             if (this.dato.isIsVarArreglo()) {
-                this.dato = tabla.getDatoArreglo(dato);
+                tmp.setInicializado(true);
+                tmp.setValorDato(tabla.getDatoArreglo(dato));
             }
-            return this.dato;
+            return tmp;
         }
         Dato datoLeft = this.opLeft.executeOp(errorsSemanticos, tabla);
         Dato datoRight = this.opRight.executeOp(errorsSemanticos, tabla);
@@ -76,10 +81,10 @@ public class NodoOperation {
         return this.operation.resultOp(datoLeft, datoRight, tipoOperacion);
 
     }
-    
-    private void capturarParametros(ArrayList<Dato> parameRecibidos){
+
+    private void capturarParametros(ArrayList<Dato> parameRecibidos) {
         this.parametros = new ArrayList<>();
-        parameRecibidos.forEach(para ->{
+        parameRecibidos.forEach(para -> {
             this.parametros.add(para);
         });
     }
@@ -172,6 +177,5 @@ public class NodoOperation {
     public void setRetorna(boolean retorna) {
         this.retorna = retorna;
     }
-    
-    
+
 }

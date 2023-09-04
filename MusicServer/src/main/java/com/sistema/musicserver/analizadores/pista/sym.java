@@ -19,6 +19,7 @@ public class sym {
   public static final int VERDADERO = 15;
   public static final int SI = 48;
   public static final int KEEP = 36;
+  public static final int PRIMOS = 84;
   public static final int INCREMENT = 46;
   public static final int FALSO = 14;
   public static final int POR = 18;
@@ -31,11 +32,13 @@ public class sym {
   public static final int VAR = 35;
   public static final int NOTEQUALS = 26;
   public static final int ISNULO = 37;
+  public static final int IMPARES = 83;
   public static final int SALIR = 52;
   public static final int HACER = 56;
   public static final int NOTA_MI = 73;
   public static final int PARA = 55;
   public static final int NUM_ENTERO = 10;
+  public static final int PARES = 82;
   public static final int COMA = 7;
   public static final int ENTERO = 28;
   public static final int MODULO = 20;
@@ -81,10 +84,12 @@ public class sym {
   public static final int CONT_CADENA = 13;
   public static final int CADENA = 31;
   public static final int NOTA_SOL_S = 77;
+  public static final int ASCENDENTE = 80;
   public static final int AND = 42;
   public static final int LLAVEC = 6;
   public static final int LLAVEA = 5;
   public static final int MAYOROI = 24;
+  public static final int DESCENDENTE = 81;
   public static final int NAND = 43;
   public static final int XOR = 40;
   public static final int EQUALS = 27;
@@ -168,7 +173,12 @@ public class sym {
   "NOTA_SOL",
   "NOTA_SOL_S",
   "NOTA_LA",
-  "NOTA_LA_S"
+  "NOTA_LA_S",
+  "ASCENDENTE",
+  "DESCENDENTE",
+  "PARES",
+  "IMPARES",
+  "PRIMOS"
   };
 }
 

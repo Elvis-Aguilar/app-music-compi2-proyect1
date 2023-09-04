@@ -46,64 +46,469 @@ public class CasteoOperacion {
                 datoResult = operacionPotencia();
                 break;
             case MAYORQ:
-                datoResult = operacionMayoQ();
+                datoResult = operacionMayorQ();
+                break;
+            case MENORQ:
+                datoResult = operacionMenorQ();
+                break;
+            case MAYOROI:
+                datoResult = operacionMayorQueOIgual();
+                break;
+            case MENOROI:
+                datoResult = operacionMenorQueOIgual();
+                break;
+            case NOTEQUALS:
+                datoResult = operacionDiferenteQue();
+                break;
+            case EQUALS:
+                datoResult = operacionIgualA();
+                break;
+            case OR:
+                datoResult = operacionOR();
+                break;
+            case AND:
+                datoResult = operacionAND();
+                break;
+            case NAND:
+                datoResult = operacionNAND();
+                break;
+            case NOR:
+                datoResult = operacionNOR();
+                break;
+            case XOR:
+                datoResult = operacionXOR();
                 break;
         }
         return datoResult;
     }
 
-    private Dato operacionMayoQ() {
+    private Dato operacionMayorQ() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
-        if (this.dato1.getTipoDato() == TipoDato.ENTERO) {
-            if (this.dato2.getTipoDato() == TipoDato.ENTERO) {
-                if (this.dato1.getNumero() > this.dato2.getNumero()) {
-                    datoResult.setTipoDato(TipoDato.BOOLEAN);
-                    datoResult.setBooleano(true);
-                } else {
-                    datoResult.setTipoDato(TipoDato.BOOLEAN);
-                    datoResult.setBooleano(false);
-                }
-                if (this.dato2.getTipoDato() == TipoDato.DECIMAL) {
-                    if (this.dato1.getNumero() > this.dato2.getDecimal()) {
+        switch (this.dato1.getTipoDato()) {
+            case ENTERO:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
                         datoResult.setTipoDato(TipoDato.BOOLEAN);
-                        datoResult.setBooleano(true);
-                    } else {
+                        datoResult.setBooleano(this.dato1.getNumero() > this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
                         datoResult.setTipoDato(TipoDato.BOOLEAN);
-                        datoResult.setBooleano(false);
-                    }
-                }
-            }
-            
-        }
-        if (this.dato1.getTipoDato() == TipoDato.DECIMAL) {
-            if (this.dato2.getTipoDato() == TipoDato.ENTERO) {
-                if (this.dato1.getDecimal() > this.dato2.getNumero()) {
-                    datoResult.setTipoDato(TipoDato.BOOLEAN);
-                    datoResult.setBooleano(true);
-                } else {
-                    datoResult.setTipoDato(TipoDato.BOOLEAN);
-                    datoResult.setBooleano(false);
-                }
-                if (this.dato2.getTipoDato() == TipoDato.DECIMAL) {
-                    if (this.dato1.getDecimal() > this.dato2.getDecimal()) {
-                        datoResult.setTipoDato(TipoDato.BOOLEAN);
-                        datoResult.setBooleano(true);
-                    } else {
-                        datoResult.setTipoDato(TipoDato.BOOLEAN);
-                        datoResult.setBooleano(false);
-                    }
-                }
-            }
-            
-        }
-        //guardar el error
-        //this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "no de puede restar un valor no numerico - otro valor"));
+                        datoResult.setBooleano(this.dato1.getNumero() > this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion > (mayorQ) hacepta un entero compararado con entero o decimal"));
+                        break;
 
+                }
+                break;
+            case DECIMAL:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() > this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() > this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion > (mayorQ) hacepta un Decimal compararado con entero o decimal"));
+                        break;
+                }
+                break;
+            case CADENA:
+                switch (this.dato2.getTipoDato()) {
+                    case CADENA:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getCadena().length() > this.dato2.getCadena().length());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion > (mayorQ) hacepta una Cadena compararado con otra cadena"));
+                        break;
+                }
+                break;
+            default:
+                //error
+                this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion > (mayorQ) No acepta los valores ingresados, la comparacion no se puede efectuar"));
+                break;
+        }
         return datoResult;
 
     }
 
-    public Dato operacionSuma() {
+    private Dato operacionMayorQueOIgual() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        switch (this.dato1.getTipoDato()) {
+            case ENTERO:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() >= this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() >= this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion >= (mayor Que o igual) hacepta un entero compararado con entero o decimal"));
+                        break;
+
+                }
+                break;
+            case DECIMAL:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() >= this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() >= this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion  >= (mayor Que o igual) hacepta un Decimal compararado con entero o decimal"));
+                        break;
+                }
+                break;
+            case CADENA:
+                switch (this.dato2.getTipoDato()) {
+                    case CADENA:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getCadena().length() >= this.dato2.getCadena().length());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion >= (mayor Que o igual) hacepta una Cadena compararado con otra cadena"));
+                        break;
+                }
+                break;
+            default:
+                //error
+                this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion >= (mayor Que o igual) No acepta los valores ingresados, la comparacion no se puede efectuar"));
+                break;
+        }
+        return datoResult;
+
+    }
+
+    private Dato operacionMenorQ() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        switch (this.dato1.getTipoDato()) {
+            case ENTERO:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() < this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() < this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion < (menor que) hacepta un entero compararado con entero o decimal"));
+                        break;
+
+                }
+                break;
+            case DECIMAL:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() < this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() < this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion < (menor que) hacepta un Decimal compararado con entero o decimal"));
+                        break;
+                }
+                break;
+            case CADENA:
+                switch (this.dato2.getTipoDato()) {
+                    case CADENA:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getCadena().length() < this.dato2.getCadena().length());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion < (menor que) hacepta una Cadena compararado con otra cadena"));
+                        break;
+                }
+                break;
+            default:
+                //error
+                this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion < (Menor que) No acepta los valores ingresados, la comparacion no se puede efectuar"));
+                break;
+        }
+        return datoResult;
+
+    }
+
+    private Dato operacionMenorQueOIgual() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        switch (this.dato1.getTipoDato()) {
+            case ENTERO:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() <= this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() <= this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion <= (menor que o igual) hacepta un entero compararado con entero o decimal"));
+                        break;
+
+                }
+                break;
+            case DECIMAL:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() <= this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() <= this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion <= (menor que o igual) hacepta un Decimal compararado con entero o decimal"));
+                        break;
+                }
+                break;
+            case CADENA:
+                switch (this.dato2.getTipoDato()) {
+                    case CADENA:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getCadena().length() <= this.dato2.getCadena().length());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion <= (menor que o igual) hacepta una Cadena compararado con otra cadena"));
+                        break;
+                }
+                break;
+            default:
+                //error
+                this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion <= (menor que o igual) No acepta los valores ingresados, la comparacion no se puede efectuar"));
+                break;
+        }
+        return datoResult;
+
+    }
+
+    private Dato operacionDiferenteQue() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        switch (this.dato1.getTipoDato()) {
+            case ENTERO:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() != this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() != this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion != (Diferente Que) hacepta un entero compararado con entero o decimal"));
+                        break;
+
+                }
+                break;
+            case DECIMAL:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() != this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() != this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion  != (Diferente Que) hacepta un Decimal compararado con entero o decimal"));
+                        break;
+                }
+                break;
+            case CADENA:
+                switch (this.dato2.getTipoDato()) {
+                    case CADENA:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(!this.dato1.getCadena().equals(this.dato2.getCadena()));
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion != (Diferente Que) hacepta una Cadena compararado con otra cadena"));
+                        break;
+                }
+                break;
+            case CHAR:
+                switch (this.dato2.getTipoDato()) {
+                    case CHAR:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getCaracter() != this.dato2.getCaracter());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion != (Diferente Que) hacepta una Cadena compararado con otra cadena"));
+                        break;
+                }
+                break;
+            default:
+                //error
+                this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion) != (Diferente Que) No acepta los valores ingresados, la comparacion no se puede efectuar"));
+                break;
+        }
+        return datoResult;
+
+    }
+
+    private Dato operacionIgualA() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        switch (this.dato1.getTipoDato()) {
+            case ENTERO:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() == this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getNumero() == this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion == (Igual A) hacepta un entero compararado con entero o decimal"));
+                        break;
+
+                }
+                break;
+            case DECIMAL:
+                switch (this.dato2.getTipoDato()) {
+                    case ENTERO:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() == this.dato2.getNumero());
+                        break;
+                    case DECIMAL:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getDecimal() == this.dato2.getDecimal());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion   == (Igual A) hacepta un Decimal compararado con entero o decimal"));
+                        break;
+                }
+                break;
+            case CADENA:
+                switch (this.dato2.getTipoDato()) {
+                    case CADENA:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getCadena().equals(this.dato2.getCadena()));
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion  == (Igual A) hacepta una Cadena compararado con otra cadena"));
+                        break;
+                }
+                break;
+            case CHAR:
+                switch (this.dato2.getTipoDato()) {
+                    case CHAR:
+                        datoResult.setTipoDato(TipoDato.BOOLEAN);
+                        datoResult.setBooleano(this.dato1.getCaracter() == this.dato2.getCaracter());
+                        break;
+                    default:
+                        //error
+                        this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion  == (Igual A) hacepta una Cadena compararado con otra cadena"));
+                        break;
+                }
+                break;
+            default:
+                //error
+                this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "La operacion)  == (Igual A) No acepta los valores ingresados, la comparacion no se puede efectuar"));
+                break;
+        }
+        return datoResult;
+
+    }
+
+    private Dato operacionOR() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        datoResult.setTipoDato(TipoDato.BOOLEAN);
+        if (this.dato1.getTipoDato() == TipoDato.BOOLEAN && this.dato2.getTipoDato() == TipoDato.BOOLEAN) {
+            datoResult.setBooleano(this.dato1.isBooleano() || this.dato2.isBooleano());
+        } else {
+            this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "El Operador OR solo acepta comparacion entre expresiones Booleanas"));
+        }
+
+        return datoResult;
+    }
+    
+    private Dato operacionAND() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        datoResult.setTipoDato(TipoDato.BOOLEAN);
+        if (this.dato1.getTipoDato() == TipoDato.BOOLEAN && this.dato2.getTipoDato() == TipoDato.BOOLEAN) {
+            datoResult.setBooleano(this.dato1.isBooleano() && this.dato2.isBooleano());
+        } else {
+            this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "El Operador AND solo acepta comparacion entre expresiones Booleanas"));
+        }
+
+        return datoResult;
+    }
+    
+    private Dato operacionNAND() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        datoResult.setTipoDato(TipoDato.BOOLEAN);
+        if (this.dato1.getTipoDato() == TipoDato.BOOLEAN && this.dato2.getTipoDato() == TipoDato.BOOLEAN) {
+            datoResult.setBooleano(!(this.dato1.isBooleano() && this.dato2.isBooleano()));
+        } else {
+            this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "El Operador NAND solo acepta comparacion entre expresiones Booleanas"));
+        }
+
+        return datoResult;
+    }
+    
+    private Dato operacionNOR() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        datoResult.setTipoDato(TipoDato.BOOLEAN);
+        if (this.dato1.getTipoDato() == TipoDato.BOOLEAN && this.dato2.getTipoDato() == TipoDato.BOOLEAN) {
+            datoResult.setBooleano(!(this.dato1.isBooleano() || this.dato2.isBooleano()));
+        } else {
+            this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "El Operador NOR solo acepta comparacion entre expresiones Booleanas"));
+        }
+
+        return datoResult;
+    }
+    
+    private Dato operacionXOR() {
+        Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
+        datoResult.setTipoDato(TipoDato.BOOLEAN);
+        if (this.dato1.getTipoDato() == TipoDato.BOOLEAN && this.dato2.getTipoDato() == TipoDato.BOOLEAN) {
+            datoResult.setBooleano((this.dato1.isBooleano() && !this.dato2.isBooleano()) || (!this.dato1.isBooleano() && this.dato2.isBooleano()));
+        } else {
+            this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "El Operador NOR solo acepta comparacion entre expresiones Booleanas"));
+        }
+
+        return datoResult;
+    }
+
+    private Dato operacionSuma() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         switch (this.dato1.getTipoDato()) {
             case CADENA:
@@ -130,7 +535,7 @@ public class CasteoOperacion {
 
     }
 
-    public Dato operacionResta() {
+    private Dato operacionResta() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         if (dato1.getTipoDato() == TipoDato.DECIMAL) {
             switch (this.dato2.getTipoDato()) {
@@ -190,7 +595,7 @@ public class CasteoOperacion {
 
     }
 
-    public Dato operacionMultpli() {
+    private Dato operacionMultpli() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         if (dato1.getTipoDato() == TipoDato.DECIMAL) {
             switch (this.dato2.getTipoDato()) {
@@ -248,7 +653,7 @@ public class CasteoOperacion {
 
     }
 
-    public Dato operacionDiv() {
+    private Dato operacionDiv() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         if (dato1.getTipoDato() == TipoDato.DECIMAL) {
             switch (this.dato2.getTipoDato()) {
@@ -310,7 +715,7 @@ public class CasteoOperacion {
 
     }
 
-    public Dato operacionMod() {
+    private Dato operacionMod() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         if (dato1.getTipoDato() == TipoDato.DECIMAL) {
             switch (this.dato2.getTipoDato()) {
@@ -369,7 +774,7 @@ public class CasteoOperacion {
 
     }
 
-    public Dato operacionPotencia() {
+    private Dato operacionPotencia() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         if (dato1.getTipoDato() == TipoDato.DECIMAL) {
             switch (this.dato2.getTipoDato()) {

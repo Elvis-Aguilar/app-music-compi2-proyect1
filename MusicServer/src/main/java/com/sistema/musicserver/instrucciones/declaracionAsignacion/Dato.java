@@ -118,6 +118,27 @@ public class Dato {
 
         return indices;
     }
+    
+    public void setValorDato(Dato dato){
+        this.tipoDato = dato.getTipoDato();
+         switch (dato.getTipoDato()) {
+            case CADENA:
+                cadena = dato.getCadena();
+                break;
+            case BOOLEAN:
+                this.booleano = dato.isBooleano();
+                break;
+            case CHAR:
+                this.caracter = dato.getCaracter();
+                break;
+            case DECIMAL:
+                this.decimal = dato.getDecimal();
+                break;
+            default:
+                this.numero = dato.getNumero();
+                break;
+        }
+    }
 
     /*espacio para getters y settesrs*/
     public String getCadena() {

@@ -23,6 +23,14 @@ public class Variable {
         this.inicializado = inicializado;
         this.dato = new Dato(inicializado, token, tipo);
     }
+    
+    public Variable(Token token, TipoDato tipo, String nombre) {
+        this.token = token;
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.inicializado = false;
+        this.dato = new Dato(inicializado, token, tipo);
+    }
 
     public Token getToken() {
         return token;
@@ -107,7 +115,7 @@ public class Variable {
         String cade = "";
         switch (datoNuevo.getTipoDato()) {
             case CADENA:
-                this.dato = datoNuevo;
+                this.dato.setCadena(datoNuevo.getCadena());
                 break;
             case BOOLEAN:
                 cade = (datoNuevo.isBooleano()) ? "true" : "false";
@@ -133,7 +141,7 @@ public class Variable {
         int num = 0;
         switch (datoNuevo.getTipoDato()) {
             case CADENA:
-                errorsSemanticos.add(new ErrorSemantico(datoNuevo.getToken(), "Las variables Entro no acepta datos del tipo Cadena"));
+                errorsSemanticos.add(new ErrorSemantico(datoNuevo.getToken(), "Las variables Entero no acepta datos del tipo Cadena"));
                 break;
             case BOOLEAN:
                 num = (datoNuevo.isBooleano()) ? 1 : 2;
@@ -148,7 +156,7 @@ public class Variable {
                 this.dato.setNumero(num);
                 break;
             default:
-                this.dato = datoNuevo;
+                this.dato.setNumero(datoNuevo.getNumero());
                 break;
         }
 
@@ -158,7 +166,7 @@ public class Variable {
         char carcter = 'a';
         switch (datoNuevo.getTipoDato()) {
             case CHAR:
-                this.dato = datoNuevo;
+                this.dato.setCaracter(datoNuevo.getCaracter());
                 break;
             case ENTERO:
                 carcter = (char) datoNuevo.getNumero();
@@ -174,7 +182,7 @@ public class Variable {
     private void doubleAsigOtroDato(Dato datoNuevo, ArrayList<ErrorSemantico> errorsSemanticos) {
         switch (datoNuevo.getTipoDato()) {
             case DECIMAL:
-                this.dato = datoNuevo;
+                this.dato.setDecimal(datoNuevo.getDecimal());
                 break;
             case ENTERO:
                 this.dato.setDecimal(datoNuevo.getNumero());
@@ -188,7 +196,7 @@ public class Variable {
 
     private void booleanAsigOtroDato(Dato datoNuevo, ArrayList<ErrorSemantico> errorsSemanticos) {
         if (datoNuevo.getTipoDato() == TipoDato.BOOLEAN) {
-            this.dato = datoNuevo;
+            this.dato.setBooleano(datoNuevo.isBooleano());
         } else {
             errorsSemanticos.add(new ErrorSemantico(datoNuevo.getToken(), "Las variables booleanas no aceptan otro tipo de dato que no sea booleano"));
         }

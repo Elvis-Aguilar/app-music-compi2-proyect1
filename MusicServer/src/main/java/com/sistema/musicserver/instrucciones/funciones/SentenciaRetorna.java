@@ -40,6 +40,7 @@ public class SentenciaRetorna extends Instruccions {
     public void actionReferenciarTabla(TablaSimbol tabla) {
         this.tableSimbol = tabla;
         this.realizarAccion = tableSimbol.buscarRetorno("varRetonoSimbolTable");
+        this.asignacion.actionReferenciarTabla(this.tableSimbol);
         if (!realizarAccion) {
             this.errorsSemanticos.add(new ErrorSemantico(token, "La funcion no tiene Tipo de Retrono Definido"));
         }

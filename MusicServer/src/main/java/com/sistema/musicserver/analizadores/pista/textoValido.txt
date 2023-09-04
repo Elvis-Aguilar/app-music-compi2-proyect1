@@ -12,26 +12,102 @@ Pista algo1 {
     algo (){
         var cadena cades = "hola Elvis";
         var cadena cadess = "Adios Elvis";
-        Mensaje("la sentencia es: "+ conditi +"  por lo tanto; ");
-        si(conditi) {
-            hacer {
-                var entero iter = 0;
-                Mensaje(cade);
-            }mientras(falso);
+        Mensaje("la sentencia es: "+ (5 >= otro) +"  por lo tanto; ");
+        si(5 >= otro) {
             cade = cades;
-            algo = 5;
-            algo++;
-            Mensaje(cade);
+            var entero iter = 0;
+            hacer {
+                Mensaje(cade);
+                iter++;
+                Mensaje(iter);
+            }mientras(2>iter);
+            var entero rest = sum(5,2) + sum(2,1);
+            Mensaje("El resultado de la operacion es: "+ rest );
         } sino {
-
             cade = cadess;
             algo = 28;
             Mensaje(cade);
         }
-    }
+    } 
+    entero sum(entero num1, entero num2){
+        retorna num1+num2;
+    } 
 } 
 instrucciones.ejecutar
 listaPista.add algo1
+
+
+
+Pista algo1 {
+    var entero algo, otro = 2+5*7-1;
+    var cadena cade = "hola mundo "+algo;
+    otro = 5;
+    var boolean conditi = verdadero;
+    var entero arreglo arr10,arr20,arr30 [][]={{5,10,15},{20,25,30}};
+
+    Principal() {
+        algo();
+        arr10[1][1] = 30+5;
+    }
+    algo (){
+        var cadena cades = "hola Elvis";
+        var cadena cadess = "Adios Elvis";
+        Mensaje("la sentencia es: "+ (5 >= otro) +"  por lo tanto; ");
+        si(5 >= otro) {
+            cade = cades;
+            var entero iter = 0;
+            hacer {
+                Mensaje(cade);
+                iter++;
+                Mensaje(iter);
+            }mientras(2>iter);
+            var entero rest = sum(5,2) + sum(2,1);
+            Mensaje("El resultado de la operacion es: "+ rest );
+        } sino {
+            cade = cadess;
+            algo = 28;
+            Mensaje(cade);
+        }
+    } 
+    entero sum(entero num1, entero num2){
+        retorna num1+num2;
+    } 
+} 
+Pista algo1 {
+    var entero algo, otro = 2+5*7-1;
+    var cadena cade = "hola mundo "+algo;
+    otro = 5;
+    var boolean conditi = verdadero;
+    var entero arreglo arr10,arr20,arr30 [][]={{5,10,15},{20,25,30}};
+
+    Principal() {
+        algo();
+        arr10[1][1] = 30+5;
+    }
+    algo (){
+        var cadena cades = "hola Elvis";
+        var cadena cadess = "Adios Elvis";
+        Mensaje("la sentencia es: "+ (5 > otro) +"  por lo tanto; ");
+        si(5 > otro) {
+            cade = cades;
+            var entero iter = 0;
+            hacer {
+                Mensaje(cade);
+                iter++;
+                Mensaje(iter);
+            }mientras(2>iter);
+            var entero rest = sum(5,2) + sum(2,1);
+            Mensaje("El resultado de la operacion es: "+ rest );
+        } sino {
+            cade = cadess;
+            algo = 28;
+            Mensaje(cade);
+        }
+    } 
+    entero sum(entero num1, entero num2){
+        retorna num1+num2;
+    } 
+} 
 
 
 Pista algo2  {

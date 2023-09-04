@@ -81,7 +81,7 @@ public class Pista {
             if (funcion.getParametros().size() != parametros.size()) {
                 continue;
             }
-            if (comprobarTipos(parametros, funcion.getParametros(), id)) {
+            if (comprobarTipos(parametros, funcion.getParametros(), id, funcion.getTableSimbol())) {
                 fun = funcion;
                 break;
             }
@@ -94,7 +94,7 @@ public class Pista {
         return fun;
     }
 
-    public boolean comprobarTipos(ArrayList<Dato> parametros, ArrayList<Variable> varParametros, Token id) {
+    public boolean comprobarTipos(ArrayList<Dato> parametros, ArrayList<Variable> varParametros, Token id, TablaSimbol tabla) {
         boolean conciden = true;
         int index = 0;
         for (Variable varParametro : varParametros) {
@@ -102,7 +102,7 @@ public class Pista {
                 conciden = false;
                 break;
             }
-            varParametro.setDato(parametros.get(index), errorsSemanticos);
+            tabla.asignacionValorVariable(parametros.get(index), varParametro.getToken());
             index++;
         }
         return conciden;

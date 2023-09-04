@@ -102,6 +102,11 @@ SUMARIZAR = "sumarizar"|"Sumarizar"
 LONGITUD = "longitud"|"Longitud"
 MENSAJE = "mensaje"|"Mensaje"
 PRINCIPAL = "principal"|"Principal"  
+ASCENDENTE = "ascendente"|"Ascendente"
+DESCENDENTE = "descendente"|"Descendente"
+PARES = "pares"|"Pares"
+IMPARES = "impares"|"Impares"
+PRIMOS = "primos"|"Primos"
 
 NOTA_DO = "Do"                                    
 NOTA_DO_S = "Do#"                                   
@@ -212,17 +217,22 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 {PRINCIPAL}             { return symbol(sym.PRINCIPAL,yytext());}
 {DOPUNTO}               { return symbol(sym.DOPUNTO,yytext());}
 {ARREGLO}               { return symbol(sym.ARREGLO,yytext());}
-{NOTA_DO}              {return symbol(sym.NOTA_DO,yytext());}                                  
-{NOTA_DO_S}            {return symbol(sym.NOTA_DO_S,yytext());}                                  
-{NOTA_RE}              {return symbol(sym.NOTA_RE,yytext());}                                
-{NOTA_RE_S}            {return symbol(sym.NOTA_RE_S,yytext());}                                  
-{NOTA_MI}             {return symbol(sym.NOTA_MI,yytext());}                                  
-{NOTA_FA}              {return symbol(sym.NOTA_FA,yytext());}                                  
-{NOTA_FA_S}            {return symbol(sym.NOTA_FA_S,yytext());}                                  
-{NOTA_SOL}             {return symbol(sym.NOTA_SOL,yytext());}                                 
-{NOTA_SOL_S}           {return symbol(sym.NOTA_SOL_S,yytext());}                                  
-{NOTA_LA}              {return symbol(sym.NOTA_LA,yytext());}                                  
-{NOTA_LA_S}            {return symbol(sym.NOTA_LA_S,yytext());}                                 
+{NOTA_DO}               {return symbol(sym.NOTA_DO,yytext());}                                  
+{NOTA_DO_S}             {return symbol(sym.NOTA_DO_S,yytext());}                                  
+{NOTA_RE}               {return symbol(sym.NOTA_RE,yytext());}                                
+{NOTA_RE_S}             {return symbol(sym.NOTA_RE_S,yytext());}                                  
+{NOTA_MI}               {return symbol(sym.NOTA_MI,yytext());}                                  
+{NOTA_FA}               {return symbol(sym.NOTA_FA,yytext());}                                  
+{NOTA_FA_S}             {return symbol(sym.NOTA_FA_S,yytext());}                                  
+{NOTA_SOL}              {return symbol(sym.NOTA_SOL,yytext());}                                 
+{NOTA_SOL_S}            {return symbol(sym.NOTA_SOL_S,yytext());}                                  
+{NOTA_LA}               {return symbol(sym.NOTA_LA,yytext());}                                  
+{NOTA_LA_S}             {return symbol(sym.NOTA_LA_S,yytext());}  
+{ASCENDENTE}            {return symbol(sym.ASCENDENTE,yytext());}      
+{DESCENDENTE}           {return symbol(sym.DESCENDENTE,yytext());}      
+{PARES}                 {return symbol(sym.PARES,yytext());} 
+{IMPARES}               {return symbol(sym.IMPARES,yytext());}  
+{PRIMOS}                {return symbol(sym.PRIMOS,yytext());}                                 
 {COMMET}                { /*return symbol(sym.COMMET,yytext());*/}
 {ID}                    { return symbol(sym.ID,yytext());}
 {COMILLAS}              {cadena = ""; yybegin(CADE);}

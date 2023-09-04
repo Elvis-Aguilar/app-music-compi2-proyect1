@@ -22,7 +22,7 @@ public class Funcion extends Instruccions {
     private TipoDato tipoRetono = null;
 
     public Funcion(ArrayList<Variable> parametros, TablaSimbol tableSimbol, String nombre, Token token, TipoDato tipoRetono) {
-        this.parametros = parametros;
+        this.parametros = new ArrayList<>(parametros);
         this.tableSimbol = tableSimbol;
         this.nombre = nombre;
         this.token = token;
@@ -77,9 +77,11 @@ public class Funcion extends Instruccions {
     }
 
     private void agregarVarRetornoATableSimbol() {
-        this.tableSimbol.getVariables().add(new Variable(token, tipoRetono, "varRetonoSimbolTable", false));
+        this.tableSimbol.getVariables().add(new Variable(token, tipoRetono, "varRetonoSimbolTable"));
     }
-
+    
+    
+    
     /*Espacio para getter y setters*/
     public ArrayList<Instruccions> getInstruccions() {
         return instruccions;
@@ -128,5 +130,12 @@ public class Funcion extends Instruccions {
     public void setTipoRetono(TipoDato tipoRetono) {
         this.tipoRetono = tipoRetono;
     }
+
+    @Override
+    public String toString() {
+        return "Funcion{" + "parametros=" + parametros + ", tableSimbol=" + tableSimbol + ", nombre=" + nombre + ", token=" + token + ", instruccions=" + instruccions + ", tipoRetono=" + tipoRetono + '}';
+    }
+    
+    
 
 }

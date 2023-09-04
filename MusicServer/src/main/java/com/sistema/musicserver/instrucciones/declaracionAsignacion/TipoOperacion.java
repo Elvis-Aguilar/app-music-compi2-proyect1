@@ -7,5 +7,15 @@ public enum TipoOperacion {
     DIVISION,
     MODULO,
     POTENCIA,
-    MAYORQ
+    MAYORQ,
+    MENORQ,
+    MAYOROI,
+    MENOROI,
+    NOTEQUALS,
+    EQUALS,
+    OR,
+    AND,
+    NAND,
+    NOR,
+    XOR
 }

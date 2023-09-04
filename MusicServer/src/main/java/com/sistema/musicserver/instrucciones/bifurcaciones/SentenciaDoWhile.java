@@ -5,6 +5,7 @@ import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
+import com.sistema.musicserver.instrucciones.funciones.FunMensaje;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import java.util.ArrayList;
 
@@ -36,11 +37,14 @@ public class SentenciaDoWhile extends Instruccions {
 
     @Override
     public void execute(ArrayList<ErrorSemantico> errorsSemanticos) {
+        boolean condicionv = false;
         do {
             instruccions.forEach(inst -> {
                 inst.execute(errorsSemanticos);
             });
-        } while (this.valorBoolean(errorsSemanticos));
+            condicionv = this.valorBoolean(errorsSemanticos);
+            
+        } while (condicionv);
     }
 
     private boolean valorBoolean(ArrayList<ErrorSemantico> errorsSemanticos) {
