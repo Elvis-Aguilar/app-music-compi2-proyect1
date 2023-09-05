@@ -13,7 +13,6 @@ public class TablaSimbol {
     private ArrayList<Token> ids = new ArrayList<>();
     private ArrayList<Variable> variables = new ArrayList<>();
     private ArrayList<ErrorSemantico> erros;
-    private TablaSimbol tablaSimbolHijo;
     private TablaSimbol tablaSimbolPadre;
     private boolean isFuncion;
     private ArrayList<Arreglo> arreglos = new ArrayList<>();
@@ -37,7 +36,7 @@ public class TablaSimbol {
 
     public void capturarArreglos(TipoDato tipo, int dimensionesDecla, int maxIndice, int maxIndiceFila) {
         ids.forEach(id -> {
-            Arreglo arreglo = new Arreglo(id, tipo, dimensionesDecla, maxIndice,maxIndiceFila);
+            Arreglo arreglo = new Arreglo(id, tipo, dimensionesDecla, maxIndice, maxIndiceFila);
             this.arreglos.add(arreglo);
         });
     }
@@ -184,7 +183,7 @@ public class TablaSimbol {
             if (arreglo.getToken().getLexeme().equals(id.getLexeme())) {
                 if (dimension != arreglo.getDimension()) {
                     this.erros.add(new ErrorSemantico(id, "La Dimension del arreglo no conside, puede que tenga mas [] o menos[]"));
-                }else{
+                } else {
                     if (arreglo.indicesValido(indices, erros, id)) {
                         arreglo.capturarValor(dato, id, indices, this.erros);
                     }
@@ -253,9 +252,7 @@ public class TablaSimbol {
         }
         return repti;
     }
-    
-    
-    
+
     public Dato getDatoArreglo(Dato dato) {
         Dato tmp = new Dato(true, 0, TipoDato.ENTERO);
         boolean encontredo = false;
@@ -265,7 +262,7 @@ public class TablaSimbol {
                     ArrayList<Integer> indeces = dato.getIndices(erros, this);
                     if (arreglo.indicesValido(indeces, erros, dato.getToken())) {
                         tmp = arreglo.getDatoEspecifico(erros, indeces);
-                    }                    
+                    }
                     encontredo = true;
                     break;
                 }
@@ -280,6 +277,12 @@ public class TablaSimbol {
             }
         }
         return tmp;
+    }
+
+    public void extenderDeOtraTabla(ArrayList<Variable> variables, ArrayList<Arreglo> arreglos) {
+        this.variables.addAll(variables);
+        this.arreglos.addAll(arreglos);
+
     }
 
     /*espacio para getters y setters*/
@@ -305,14 +308,6 @@ public class TablaSimbol {
 
     public void setVariables(ArrayList<Variable> variables) {
         this.variables = variables;
-    }
-
-    public TablaSimbol getTablaSimbolHijo() {
-        return tablaSimbolHijo;
-    }
-
-    public void setTablaSimbolHijo(TablaSimbol tablaSimbolHijo) {
-        this.tablaSimbolHijo = tablaSimbolHijo;
     }
 
     public TablaSimbol getTablaSimbolPadre() {

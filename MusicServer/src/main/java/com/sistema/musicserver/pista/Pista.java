@@ -23,12 +23,29 @@ public class Pista {
     private ArrayList<Funcion> funciones = new ArrayList<>();
     private Funcion funPrincipal;
     private int sizeArray = 0;
+    private ArrayList<Token> extendiende;
 
     public Pista(String nombre, TablaSimbol tableSimbolGoblal, ArrayList<ErrorSemantico> errorsSemanticos) {
         this.nombre = nombre;
         this.tableSimbolGoblal = tableSimbolGoblal;
         this.errorsSemanticos = errorsSemanticos;
     }
+    
+    public Pista(ArrayList<Token> extendiende, String nombre, TablaSimbol tableSimbolGoblal, ArrayList<ErrorSemantico> errorsSemanticos) {
+        this.nombre = nombre;
+        this.tableSimbolGoblal = tableSimbolGoblal;
+        this.errorsSemanticos = errorsSemanticos;
+        this.extendiende = extendiende;
+        this.accionExtender();
+    }
+
+    public Pista(ArrayList<Funcion> funciones, String nombre, TablaSimbol tableSimbolGoblal) {
+        this.nombre = nombre;
+        this.tableSimbolGoblal = tableSimbolGoblal;
+        this.funciones = funciones;
+    }
+    
+    
 
     public void carpturarVariablesGlobales(TipoDato tipo, boolean inicializado, Operation op) {
         if (inicializado) {
@@ -144,6 +161,22 @@ public class Pista {
         ManejadorArreglos manejador = new ManejadorArreglos(tipoArreglo, this.tableSimbolGoblal, operaciones, this.tableSimbolGoblal.getIds());
         this.instrucciones.add(manejador);
         this.tableSimbolGoblal.getIds().clear();
+    }
+    
+    public void autoguardar(){
+        PistasCompiladas.getInstance().push(this, errorsSemanticos);
+    }
+    
+    public void accionExtender(){
+        for (Token token : extendiende) {
+            Pista tmpPista = PistasCompiladas.getInstance().getPistaExtends(token);
+            if ( null == tmpPista) {
+                this.errorsSemanticos.add(new ErrorSemantico(token, "La pista a extender no existe en el registro de pistas compiladas"));
+                break;
+            }
+            this.tableSimbolGoblal.extenderDeOtraTabla(tmpPista.tableSimbolGoblal.getVariables(), tmpPista.tableSimbolGoblal.getArreglos());
+            this.funciones.addAll(tmpPista.getFunciones());
+        }
     }
 
     public void addInstruccion(Instruccions instruccion) {

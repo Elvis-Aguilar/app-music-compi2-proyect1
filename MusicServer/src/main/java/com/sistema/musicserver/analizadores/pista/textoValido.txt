@@ -73,7 +73,7 @@ Pista algo1 {
         retorna num1+num2;
     } 
 } 
-Pista algo1 {
+Pista algo2 {
     var entero algo, otro = 2+5*7-1;
     var cadena cade = "hola mundo "+algo;
     otro = 5;

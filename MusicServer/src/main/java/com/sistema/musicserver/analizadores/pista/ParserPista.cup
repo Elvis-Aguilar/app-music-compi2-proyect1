@@ -78,7 +78,7 @@ terminal Token NOTA_DO, NOTA_DO_S, NOTA_RE, NOTA_RE_S, NOTA_MI, NOTA_FA, NOTA_FA
 non terminal inicio, def_pista, comodin_pista, comodin_extiende, items_extiende, sentencias_global, sentencia_global, def_variable, variables, tipo, items_coma, items, asignacion, operation, terminal_casos, asignacion_var, comodin_fun, parametros, comodin_param, cierre_fun, def_funciones, sentencia, variables_fun, asignacion_var_fun, op_incremt_decremet_fun;
 non terminal items_coma_fun, items_fun, sentencias, terminales_increment_fun, llamada_metod, parametros_llamada, def_else_if, def_else, def_if, def_if_complete, condition, sentencias_bifuraciones, terminales_switch, caso_sw, cases, def_switch, op_incremt_decremet_for, var_iterador, condition_for, def_for, def_while, def_do_while, tipo_fun, asignacion_iterador;
 non terminal terminal_casos_param, def_fun_principal, fun_mensaje, def_fun_reproducir, def_nota_musical, def_sentencias_repro, def_fun_esperar, asignaciones_recursivas, varios_dimensiones, asignacion_arreglo, def_sin_dimens, def_dimension_arreglo, def_tipo_arreglo, def_fun_arreglo, ids, decla_array_inicializado, ids_fun, def_tipo_arreglo_fun, decla_arry, asig_arreglo;
-non terminal valor_arreglo, def_fun_ordenar, formaOrdenar, comodin_pista_recu;
+non terminal valor_arreglo, def_fun_ordenar, formaOrdenar;
 
 /* agregado de precedencias */
 precedence left OR, XOR, NOR;
@@ -93,29 +93,25 @@ precedence left POTENCIA;
 /* seccion de Gramatica */
 start with  inicio;
 
-inicio ::= comodin_pista_recu 
+inicio ::= def_pista                                                            {:pista.autoguardar();:}
         | 
         ;
 
-/*comodin para que la gramatica sera recursiva y acepte varias pistas*/
-comodin_pista_recu ::= def_pista comodin_pista_recu
-                | def_pista
-                ;
 
 /*Gramatica para definicion de la pista*/
 def_pista ::=  comodin_pista LLAVEA sentencias_global LLAVEC                    {:pista.referenciarTablasPadres(); pista.tostringDAts();:}          
         ;
 
 
-comodin_pista ::= PISTA:pist ID                                 {:pista = new Pista(pist.getLexeme(), new TablaSimbol(errorsSemanticos), errorsSemanticos);:}      
-                | PISTA ID comodin_extiende
-                ;
+comodin_pista ::= PISTA:pist ID                                                 {:pista = new Pista(pist.getLexeme(), new TablaSimbol(errorsSemanticos), errorsSemanticos);:}      
+                | PISTA ID:pist comodin_extiende:array                          {:pista = new Pista( (ArrayList<Token>)  array,pist.getLexeme(), new TablaSimbol(errorsSemanticos), errorsSemanticos);:}
+                ;       
 
-comodin_extiende ::= EXTIENDE ID items_extiende
+comodin_extiende ::= EXTIENDE ID:id items_extiende:array                        {:ArrayList<Token> ids = (ArrayList<Token>) array; ids.add(id);:}
                     ;
 
-items_extiende ::= COMA ID items_extiende
-                |
+items_extiende ::= COMA ID:id items_extiende:array                              {:ArrayList<Token> ids = (ArrayList<Token>) array; ids.add(id);:}
+                |                                                               {:RESULT= new ArrayList<>();:}
                 ;
 
 
@@ -184,8 +180,8 @@ operation ::= operation:opLeft MAS operation:opRight                            
         | operation:opLeft MENOROI operation:opRight                                            {:RESULT = new NodoOperation(TipoOperacion.MENOROI, (NodoOperation) opLeft, (NodoOperation) opRight);:}
         | operation:opLeft NOTEQUALS operation:opRight                                          {:RESULT = new NodoOperation(TipoOperacion.NOTEQUALS, (NodoOperation) opLeft, (NodoOperation) opRight);:}
         | operation:opLeft EQUALS operation:opRight                                             {:RESULT = new NodoOperation(TipoOperacion.EQUALS, (NodoOperation) opLeft, (NodoOperation) opRight);:}
-        | ISNULO operation %prec  ISNULO
-        | NOT operation	%prec NOT		 
+        | ISNULO operation
+        | NOT operation			 
         | operation:opLeft OR operation:opRight                                                 {:RESULT = new NodoOperation(TipoOperacion.OR, (NodoOperation) opLeft, (NodoOperation) opRight);:}
         | operation:opLeft AND operation:opRight                                                {:RESULT = new NodoOperation(TipoOperacion.AND, (NodoOperation) opLeft, (NodoOperation) opRight);:}
         | operation:opLeft NAND operation:opRight                                               {:RESULT = new NodoOperation(TipoOperacion.NAND, (NodoOperation) opLeft, (NodoOperation) opRight);:}
