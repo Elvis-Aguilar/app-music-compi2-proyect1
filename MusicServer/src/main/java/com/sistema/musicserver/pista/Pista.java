@@ -10,6 +10,8 @@ import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import com.sistema.musicserver.instrucciones.funciones.FunMensaje;
 import com.sistema.musicserver.instrucciones.funciones.Funcion;
+import com.sistema.musicserver.instrucciones.music.ManejadorPistaMusical;
+import com.sistema.musicserver.instrucciones.music.PistaMusical;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import com.sistema.musicserver.tablaSimbol.Variable;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class Pista {
     private Funcion funPrincipal;
     private int sizeArray = 0;
     private ArrayList<Token> extendiende;
+    private PistaMusical pistaMusical;
 
     public Pista(String nombre, TablaSimbol tableSimbolGoblal, ArrayList<ErrorSemantico> errorsSemanticos) {
         this.nombre = nombre;
@@ -39,10 +42,11 @@ public class Pista {
         this.accionExtender();
     }
 
-    public Pista(ArrayList<Funcion> funciones, String nombre, TablaSimbol tableSimbolGoblal) {
+    public Pista(PistaMusical pistaMusical, ArrayList<Funcion> funciones, String nombre, TablaSimbol tableSimbolGoblal) {
         this.nombre = nombre;
         this.tableSimbolGoblal = tableSimbolGoblal;
         this.funciones = funciones;
+        this.pistaMusical = pistaMusical;
     }
     
     
@@ -86,7 +90,7 @@ public class Pista {
         }
     }
 
-    public Funcion getFuncionEspecifica(Token id, ArrayList<Dato> parametros, boolean conRetorno) {
+    public Funcion getFuncionEspecifica(Token id, ArrayList<Operation> parametros, boolean conRetorno) {
         Funcion fun = null;
         for (Funcion funcion : funciones) {
             if (!id.getLexeme().equals(funcion.getNombre())) {
@@ -111,15 +115,16 @@ public class Pista {
         return fun;
     }
 
-    public boolean comprobarTipos(ArrayList<Dato> parametros, ArrayList<Variable> varParametros, Token id, TablaSimbol tabla) {
+    public boolean comprobarTipos(ArrayList<Operation> parametros, ArrayList<Variable> varParametros, Token id, TablaSimbol tabla) {
         boolean conciden = true;
-        int index = 0;
+        int index = 0;        
         for (Variable varParametro : varParametros) {
-            if (varParametro.getTipo() != parametros.get(index).getTipoDato()) {
+            Dato dato = parametros.get(index).execute(errorsSemanticos, tabla);
+            if (varParametro.getTipo() != dato.getTipoDato()) {
                 conciden = false;
                 break;
             }
-            tabla.asignacionValorVariable(parametros.get(index), varParametro.getToken());
+            tabla.asignacionValorVariable(dato, varParametro.getToken());
             index++;
         }
         return conciden;
@@ -164,12 +169,16 @@ public class Pista {
     }
     
     public void autoguardar(){
-        PistasCompiladas.getInstance().push(this, errorsSemanticos);
+        this.pistaMusical = ManejadorPistaMusical.getPistaMusical().pistaMusic(nombre, errorsSemanticos);
+        PistasCompiladas.getInstancePistasActivacion().push(this, errorsSemanticos);
+        if (null != pistaMusical) {
+            pistaMusical.ejecutarMusica();
+        }
     }
     
     public void accionExtender(){
         for (Token token : extendiende) {
-            Pista tmpPista = PistasCompiladas.getInstance().getPistaExtends(token);
+            Pista tmpPista = PistasCompiladas.getInstancePistasActivacion().getPistaExtends(token);
             if ( null == tmpPista) {
                 this.errorsSemanticos.add(new ErrorSemantico(token, "La pista a extender no existe en el registro de pistas compiladas"));
                 break;
@@ -239,12 +248,24 @@ public class Pista {
         this.sizeArray = sizeArray;
     }
 
+    public PistaMusical getPistaMusical() {
+        return pistaMusical;
+    }
+
+    public void setPistaMusical(PistaMusical pistaMusical) {
+        this.pistaMusical = pistaMusical;
+    }
+    
+    
+
     public void tostringDAts() {
         instrucciones.forEach(instruccione -> {
             instruccione.execute(errorsSemanticos);
         });
         //TODO: verificar si fun Principal existe
-        this.funPrincipal.execute(errorsSemanticos);
+        if (null != this.funPrincipal) {
+            this.funPrincipal.execute(errorsSemanticos);
+        }
 //        tableSimbolGoblal.getVariables().forEach(var -> {
 //            System.out.println(var.toString());
 //        });

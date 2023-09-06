@@ -38,7 +38,7 @@ public class DeclaracionVar extends Instruccions {
             this.tableSimbol.varYaDeclarada(var.getToken());
             this.tableSimbol.getVariables().add(var);
         });
-        this.variables.clear();
+        //this.variables.clear();
     }
 
     @Override

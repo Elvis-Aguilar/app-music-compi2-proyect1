@@ -16,12 +16,12 @@ public class NodoOperation {
     private CasteoOperacion operation;
     private boolean funcion = false;
     private Token tokenFun;
-    private ArrayList<Dato> parametros;
+    private ArrayList<Operation> parametros;
     private Pista pista;
     private boolean retorna = true;
     private boolean isOrdenar;
 
-    public NodoOperation(Token tokenFun, ArrayList<Dato> parametros, Pista pista) {
+    public NodoOperation(Token tokenFun, ArrayList<Operation> parametros, Pista pista) {
         this.tokenFun = tokenFun;
         this.pista = pista;
         this.funcion = true;
@@ -82,7 +82,7 @@ public class NodoOperation {
 
     }
 
-    private void capturarParametros(ArrayList<Dato> parameRecibidos) {
+    private void capturarParametros(ArrayList<Operation> parameRecibidos) {
         this.parametros = new ArrayList<>();
         parameRecibidos.forEach(para -> {
             this.parametros.add(para);
@@ -154,11 +154,11 @@ public class NodoOperation {
         this.tokenFun = tokenFun;
     }
 
-    public ArrayList<Dato> getParametros() {
+    public ArrayList<Operation> getParametros() {
         return parametros;
     }
 
-    public void setParametros(ArrayList<Dato> parametros) {
+    public void setParametros(ArrayList<Operation> parametros) {
         this.parametros = parametros;
     }
 

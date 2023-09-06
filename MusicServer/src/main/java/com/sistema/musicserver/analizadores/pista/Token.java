@@ -33,5 +33,12 @@ public class Token {
         return column;
     }
 
+    @Override
+    public String toString() {
+        return "Token{" + "lexeme=" + lexeme + ", line=" + line + ", column=" + column + '}';
+    }
+    
+    
+
 
 }

@@ -1,7 +1,6 @@
 Pista algo1 {
     var entero algo, otro = 2+5*7-1;
     var cadena cade = "hola mundo "+algo;
-    otro = 5;
     var boolean conditi = verdadero;
     var entero arreglo arr10,arr20,arr30 [][]={{5,10,15},{20,25,30}};
 
@@ -10,6 +9,7 @@ Pista algo1 {
         arr10[1][1] = 30+5;
     }
     algo (){
+        otro = 5;
         var cadena cades = "hola Elvis";
         var cadena cadess = "Adios Elvis";
         Mensaje("la sentencia es: "+ (5 >= otro) +"  por lo tanto; ");
@@ -23,6 +23,14 @@ Pista algo1 {
             }mientras(2>iter);
             var entero rest = sum(5,2) + sum(2,1);
             Mensaje("El resultado de la operacion es: "+ rest );
+            Reproducir(Do,5, 1000,5);
+            Reproducir(Re,4, 1500,3);
+            Esperar(200,5);
+            Reproducir(Re,4, 1500,3);
+            Reproducir(Mi,6, 3500,5);
+            Reproducir(Sol,7, 1500,2);
+            Esperar(200,3);
+            Reproducir(Fa,5, 500,3);
         } sino {
             cade = cadess;
             algo = 28;
@@ -118,3 +126,11 @@ instrucciones.ejecutar
 listaPista.add algo2
    
          
+Pista algo1 {
+
+
+    Principal() {
+        
+    }
+
+}

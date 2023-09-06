@@ -11,6 +11,7 @@ import com.sistema.musicserver.tablaSimbol.Variable;
 import com.sistema.musicserver.instrucciones.funciones.*;
 import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.bifurcaciones.*;
+import com.sistema.musicserver.instrucciones.music.SentenciaReproducir;
 
 
 
@@ -23,7 +24,7 @@ import com.sistema.musicserver.instrucciones.bifurcaciones.*;
         private Operation instrOp;
         private ArrayList<ErrorSemantico> errorsSemanticos = new ArrayList<ErrorSemantico>();
         private ArrayList<Variable> parametros = new ArrayList<Variable>();
-        private ArrayList<Dato> parametroLllmada = new ArrayList<>();
+        private ArrayList<Operation> parametroLllmada = new ArrayList<>();
         private int cont = 0;
         private int contDimes=0;
 
@@ -103,11 +104,11 @@ def_pista ::=  comodin_pista LLAVEA sentencias_global LLAVEC                    
         ;
 
 
-comodin_pista ::= PISTA:pist ID                                                 {:pista = new Pista(pist.getLexeme(), new TablaSimbol(errorsSemanticos), errorsSemanticos);:}      
+comodin_pista ::= PISTA ID:pist                                                 {:pista = new Pista(pist.getLexeme(), new TablaSimbol(errorsSemanticos), errorsSemanticos);:}      
                 | PISTA ID:pist comodin_extiende:array                          {:pista = new Pista( (ArrayList<Token>)  array,pist.getLexeme(), new TablaSimbol(errorsSemanticos), errorsSemanticos);:}
                 ;       
 
-comodin_extiende ::= EXTIENDE ID:id items_extiende:array                        {:ArrayList<Token> ids = (ArrayList<Token>) array; ids.add(id);:}
+comodin_extiende ::= EXTIENDE ID:id items_extiende:array                        {:ArrayList<Token> ids = (ArrayList<Token>) array; ids.add(id); RESULT = ids;:}
                     ;
 
 items_extiende ::= COMA ID:id items_extiende:array                              {:ArrayList<Token> ids = (ArrayList<Token>) array; ids.add(id);:}
@@ -251,8 +252,8 @@ comodin_param ::= tipo ID:id                                                    
         | sentencias_bifuraciones:sentbifu                                              {:RESULT = sentbifu;:}
         | RETORNA:tok asignacion:op PUNTOCOMA                                            {:RESULT = new SentenciaRetorna((Operation) op, (Token) tok, errorsSemanticos);:}
         | fun_mensaje:funMjs                                                            {:RESULT = funMjs;:}
-        | def_fun_reproducir
-        | def_fun_esperar
+        | def_fun_reproducir:repro                                                      {:RESULT = repro;:}
+        | def_fun_esperar:repro                                                         {:RESULT = repro;:}
         | decla_array_inicializado:arreglo                                              {:pista.setSizeArray(0); cont = 0; contDimes = 0; pista.getTableSimbolGoblal().getIds().clear(); RESULT = arreglo;:}
         | decla_arry:arreglo                                                            {:pista.setSizeArray(0); cont = 0; contDimes = 0; pista.getTableSimbolGoblal().getIds().clear(); RESULT = arreglo;:}
         | asig_arreglo:asig                                                             {:RESULT = asig;:}
@@ -302,13 +303,8 @@ parametros_llamada ::= terminal_casos_param COMA parametros_llamada
             ;
 
 /*Gramatica para los terminales de los parametros de funciones */
- terminal_casos_param ::= NUM_ENTERO:val                                        {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.ENTERO));:}            
-                | DECIMAL:val                                           {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.DECIMAL));:}               
-                | CONT_CARACTER:val                                     {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.CHAR));:}         
-                | CONT_CADENA:val                                       {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.CADENA));:}           
-                | FALSO:val                                             {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.BOOLEAN));:} 
-                | VERDADERO:val                                         {: parametroLllmada.add(new Dato(true,(Token) val,TipoDato.BOOLEAN));:}             
-                ;
+ terminal_casos_param ::= asignacion:asig                    {:parametroLllmada.add((Operation) asig);:}
+                        ;
 
 /*sentencias de control como if, else, for, while etc*/
 sentencias_bifuraciones ::= def_if_complete:sent     {:RESULT = sent;:}
@@ -418,29 +414,29 @@ def_fun_principal ::= PRINCIPAL:id PARENTESISA PARENTESISC  LLAVEA sentencias:in
                 ;
 
 /*Gramatica para funcion nativa Reproducir*/
-def_fun_reproducir ::= REPRODUCIR PARENTESISA def_sentencias_repro  PARENTESISC PUNTOCOMA 
+def_fun_reproducir ::= REPRODUCIR PARENTESISA def_sentencias_repro:repro  PARENTESISC PUNTOCOMA         {:RESULT = repro;:}
                 ;
 
-def_sentencias_repro ::= def_nota_musical COMA asignacion COMA asignacion COMA asignacion
+def_sentencias_repro ::= def_nota_musical:not COMA asignacion:oct COMA asignacion:milis COMA asignacion:can       {:RESULT = new SentenciaReproducir((String) not, (Operation) oct, (Operation) milis, (Operation) can) ;:}
                 ;
 
 /*Gramatica para representacion de las notas musicales*/
-def_nota_musical ::= NOTA_DO                                 
-                | NOTA_DO_S                                   
-                | NOTA_RE                                  
-                | NOTA_RE_S                                   
-                | NOTA_MI                                    
-                | NOTA_FA                                         
-                | NOTA_FA_S                                   
-                | NOTA_SOL                                  
-                | NOTA_SOL_S                                  
-                | NOTA_LA                                    
-                | NOTA_LA_S                                  
-                | SI 
+def_nota_musical ::= NOTA_DO:nota                                    {:RESULT = nota.getLexeme();:}                               
+                | NOTA_DO_S:nota                                     {:RESULT = nota.getLexeme();:}                                
+                | NOTA_RE:nota                                       {:RESULT = nota.getLexeme();:}                             
+                | NOTA_RE_S:nota                                     {:RESULT = nota.getLexeme();:}                                
+                | NOTA_MI:nota                                       {:RESULT = nota.getLexeme();:}                               
+                | NOTA_FA:nota                                       {:RESULT = nota.getLexeme();:}                                    
+                | NOTA_FA_S:nota                                     {:RESULT = nota.getLexeme();:}                                
+                | NOTA_SOL:nota                                      {:RESULT = nota.getLexeme();:}                              
+                | NOTA_SOL_S:nota                                    {:RESULT = nota.getLexeme();:}                                
+                | NOTA_LA:nota                                       {:RESULT = nota.getLexeme();:}                               
+                | NOTA_LA_S:nota                                     {:RESULT = nota.getLexeme();:}                               
+                | SI:nota                                            {:RESULT = nota.getLexeme();:}
                 ;
 
 /*gramatica para representacion de funcion esperar*/
-def_fun_esperar ::= ESPERAR PARENTESISA asignacion  COMA asignacion PARENTESISC PUNTOCOMA
+def_fun_esperar ::= ESPERAR PARENTESISA asignacion:milis  COMA asignacion:can PARENTESISC PUNTOCOMA                       {:RESULT = new SentenciaReproducir("Z", (Operation) milis, (Operation) can) ;:}
                 ;
 
 /*gramatica para el manejo de arreglos*/

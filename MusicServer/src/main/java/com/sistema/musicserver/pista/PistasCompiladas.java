@@ -30,7 +30,7 @@ public class PistasCompiladas {
      */
     public void push(Pista pista, ArrayList<ErrorSemantico> errorsSemanticos){
         if (errorsSemanticos.isEmpty()) {
-            this.pistas.add(new Pista(pista.getFunciones(), pista.getNombre(), pista.getTableSimbolGoblal()));
+            this.pistas.add(new Pista(pista.getPistaMusical(), pista.getFunciones(), pista.getNombre(), pista.getTableSimbolGoblal()));
         }else{
             System.out.println("errores en la pista");
         }
@@ -57,14 +57,7 @@ public class PistasCompiladas {
     
     
 
-    public static PistasCompiladas getInstance() {
-        return instance;
-    }
-
-    public static void setInstance(PistasCompiladas instance) {
-        PistasCompiladas.instance = instance;
-    }
-
+   
     public ArrayList<Pista> getPistas() {
         return pistas;
     }

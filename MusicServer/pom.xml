@@ -17,5 +17,10 @@
             <artifactId>java-cup</artifactId>
             <version>11b</version>
         </dependency>
+        <dependency>
+            <groupId>jfugue</groupId>
+            <artifactId>jfugue</artifactId>
+            <version>5.0.9</version>
+        </dependency>
     </dependencies>
 </project>
