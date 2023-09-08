@@ -23,6 +23,7 @@ public class SentenciaReproducir extends Instruccions implements Serializable{
     private TablaSimbol TablaSimbol;
     private String notasCalculadas = "";
     private boolean isEsperar = false;
+    private int milis = 0;
 
     public SentenciaReproducir(String Nota, Operation octava, Operation milisegundos, Operation canal) {
         this.Nota = Nota;
@@ -41,14 +42,14 @@ public class SentenciaReproducir extends Instruccions implements Serializable{
     @Override
     public void execute(ArrayList<ErrorSemantico> errorsSemanticos) {
         int canalCalculado = ejecutarValorCanal(errorsSemanticos);
-        int milis = ejecutarValorMilis(errorsSemanticos);
+        milis = ejecutarValorMilis(errorsSemanticos);
         this.agregarNota(Nota);
         if (!isEsperar) {
             int octavaCalculada = ejecutarValorOctava(errorsSemanticos);
             this.agregarOtava(octavaCalculada);
         }
         this.agregarMilis(milis);
-        ManejadorPistaMusical.getPistaMusical().pushCanal(notasCalculadas, canalCalculado);
+        ManejadorPistaMusical.getPistaMusical().pushCanal(notasCalculadas, canalCalculado, milis);
         this.notasCalculadas = "";
     }
 
@@ -192,6 +193,8 @@ public class SentenciaReproducir extends Instruccions implements Serializable{
 
         }
     }
+    
+    
 
     /*getters and Setters*/
     public String getNota() {
@@ -241,5 +244,15 @@ public class SentenciaReproducir extends Instruccions implements Serializable{
     public void setNotasCalculadas(String notasCalculadas) {
         this.notasCalculadas = notasCalculadas;
     }
+
+    public int getMilis() {
+        return milis;
+    }
+
+    public void setMilis(int milis) {
+        this.milis = milis;
+    }
+    
+    
 
 }

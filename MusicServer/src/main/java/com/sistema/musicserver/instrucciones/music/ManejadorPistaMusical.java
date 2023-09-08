@@ -3,7 +3,6 @@ package com.sistema.musicserver.instrucciones.music;
 import com.sistema.musicserver.errors.ErrorSemantico;
 import java.io.Serializable;
 import java.util.ArrayList;
-import org.jfugue.pattern.Pattern;
 
 /**
  *
@@ -21,21 +20,21 @@ public class ManejadorPistaMusical implements Serializable{
         return instance;
     }
 
-    public void pushCanal(String notaCalculad, int canal) {
+    public void pushCanal(String notaCalculad, int canal, int milis) {
         if (this.canales.isEmpty()) {
-            CanalMusical nuevoCanal = new CanalMusical(canal, notaCalculad);
+            CanalMusical nuevoCanal = new CanalMusical(canal, notaCalculad, milis);
             this.canales.add(nuevoCanal);
         } else {
             boolean agregar = true;
             for (CanalMusical canale : canales) {
                 if (canale.getCanal() == canal) {
-                    canale.agregarNotas(notaCalculad);
+                    canale.agregarNotas(notaCalculad, milis);
                     agregar = false;
                     break;
                 }
             }
             if (agregar) {
-                CanalMusical nuevoCanal = new CanalMusical(canal, notaCalculad);
+                CanalMusical nuevoCanal = new CanalMusical(canal, notaCalculad, milis);
                 this.canales.add(nuevoCanal);
             }
         }

@@ -35,6 +35,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private Lista listaenReproduccion = new Lista();
     private Lista listasEnModificacion = new Lista();
     private boolean yoTeDetube = false;
+    private final ReporLexico reportLex = new ReporLexico();
+    private final ReporteErrorSintactico reportSintactio = new ReporteErrorSintactico();
+    private final ReportErroSemantico reportSemantico = new ReportErroSemantico();
+    private final ManejadorTablas manejadorTable = new ManejadorTablas();
+    private PistasActivacion pistaActivacion;
 
     /**
      * Creates new form VentanaPrincipal
@@ -46,6 +51,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         LenguajePistajScrollPane.setRowHeaderView(numeroLineaPista);
         this.majeList.mostrarListasJlist(ListaListasjList);
         this.majeList.mostrarPistasExistentes(pistasExistentesjList);
+        pistaActivacion = new PistasActivacion(this.LenguajePistajTextArea);
     }
 
     /**
@@ -107,11 +113,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItemReportLEx = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         jMenu1.setText("jMenu1");
 
@@ -616,19 +624,39 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenu2.add(jMenuItem1);
 
         jMenuItem6.setText("Recuperar del Archivo bin");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem6);
 
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Reportes");
 
-        jMenuItem2.setText("Errores Lexicos");
-        jMenu3.add(jMenuItem2);
+        jMenuItemReportLEx.setText("Errores Lexicos");
+        jMenuItemReportLEx.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemReportLExActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItemReportLEx);
 
         jMenuItem3.setText("Errores Sintacticos");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         jMenu3.add(jMenuItem3);
 
         jMenuItem4.setText("Errores Semanticos");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu3.add(jMenuItem4);
 
         jMenuBar1.add(jMenu3);
@@ -639,6 +667,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenu4.add(jMenuItem5);
 
         jMenuBar1.add(jMenu4);
+
+        jMenu5.setText("Edit-Pistas");
+
+        jMenuItem2.setText("Ver Pistas Guardadas");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu5);
 
         setJMenuBar(jMenuBar1);
 
@@ -679,7 +719,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             parser.parse();
             ErroresSingleton.getInstance().setErroresSemanticos(parser.getErrorsSemanticos());
             this.ConsolaPistasjTextArea1.setText("");
-            if (ErroresSingleton.getInstance().existenErrores(LenguajePistajTextArea)) {
+            if (ErroresSingleton.getInstance().existenErrores(ConsolaPistasjTextArea1)) {
                 this.textoSalida();
                 parser.getPista().setCodigoFuente(this.LenguajePistajTextArea.getText());
                 parser.getPista().autoguardar();
@@ -853,6 +893,51 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jMenuItemReportLExActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemReportLExActionPerformed
+        // TODO add your handling code here:
+        if (ErroresSingleton.getInstance().getErroresLexicos().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay errores Lexicos, Revisa los Errores Sintacticos o Semanticos");
+        } else {
+            this.reportLex.setVisible(true);
+            this.reportLex.mostrarErroes(manejadorTable);
+
+        }
+    }//GEN-LAST:event_jMenuItemReportLExActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+        if (ErroresSingleton.getInstance().getErroresSintacticos().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay errores Sintacticos, Revisa los Errores Lexicos o Semanticos");
+        } else {
+            this.reportSintactio.mostrarErroes(manejadorTable);
+            this.reportSintactio.setVisible(true);
+
+        }
+
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+        if (ErroresSingleton.getInstance().getErroresSemanticos().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay errores Semanticos, Revisa los Errores Lexicos o Semanticos");
+        } else {
+            this.reportSemantico.mostrarErroes(manejadorTable);
+            this.reportSemantico.setVisible(true);
+
+        }
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(null, "Listas y Pistas recuperadas del archivo binario con exito!!!");
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        this.pistaActivacion.mostrarPistas(manejadorTable);
+        this.pistaActivacion.setVisible(true);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
     public void textoSalida() {
         String contenido = FunMensaje.getInstanceMensajes().getContenido();
         this.ConsolaPistasjTextArea1.setText(contenido);
@@ -885,6 +970,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -892,6 +978,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItemReportLEx;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;

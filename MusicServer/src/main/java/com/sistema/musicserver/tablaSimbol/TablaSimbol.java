@@ -134,7 +134,7 @@ public class TablaSimbol implements Serializable{
         if (!nomVar.equals("")) {
             for (Variable variable : variables) {
                 if (variable.getNombre().equals(nomVar)) {
-                    tmp = variable.getDato();
+                    tmp.setValorDato(variable.getDato());
                     encontredo = true;
                     break;
                 }

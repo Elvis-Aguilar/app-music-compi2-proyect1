@@ -12,6 +12,8 @@ import com.sistema.musicserver.instrucciones.funciones.*;
 import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.bifurcaciones.*;
 import com.sistema.musicserver.instrucciones.music.SentenciaReproducir;
+import com.sistema.musicserver.instrucciones.declaracionAsignacion.funcionesArreglos.*;
+
 import java.util.List;
 
 
@@ -102,7 +104,8 @@ terminal Token NOTA_DO, NOTA_DO_S, NOTA_RE, NOTA_RE_S, NOTA_MI, NOTA_FA, NOTA_FA
 non terminal inicio, def_pista, comodin_pista, comodin_extiende, items_extiende, sentencias_global, sentencia_global, def_variable, variables, tipo, items_coma, items, asignacion, operation, terminal_casos, asignacion_var, comodin_fun, parametros, comodin_param, cierre_fun, def_funciones, sentencia, variables_fun, asignacion_var_fun, op_incremt_decremet_fun;
 non terminal items_coma_fun, items_fun, sentencias, terminales_increment_fun, llamada_metod, parametros_llamada, def_else_if, def_else, def_if, def_if_complete, condition, sentencias_bifuraciones, terminales_switch, caso_sw, cases, def_switch, op_incremt_decremet_for, var_iterador, condition_for, def_for, def_while, def_do_while, tipo_fun, asignacion_iterador;
 non terminal terminal_casos_param, def_fun_principal, fun_mensaje, def_fun_reproducir, def_nota_musical, def_sentencias_repro, def_fun_esperar, asignaciones_recursivas, varios_dimensiones, asignacion_arreglo, def_sin_dimens, def_dimension_arreglo, def_tipo_arreglo, def_fun_arreglo, ids, decla_array_inicializado, ids_fun, def_tipo_arreglo_fun, decla_arry, asig_arreglo;
-non terminal valor_arreglo, def_fun_ordenar, formaOrdenar;
+non terminal valor_arreglo, def_fun_ordenar, formaOrdenar, def_fun_sumarizar, sentencias_sw, sentencia_sw, def_fun_longitud;
+
 
 /* agregado de precedencias */
 precedence left OR, XOR, NOR;
@@ -236,6 +239,11 @@ operation ::= operation:opLeft MAS operation:opRight                            
                 | FALSO:val                                             {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.BOOLEAN));:} 
                 | VERDADERO:val                                         {:RESULT = new NodoOperation(new Dato(true,(Token) val,TipoDato.BOOLEAN));:}             
                 | valor_arreglo:valArr                                  {:RESULT = valArr;:}
+                | def_fun_reproducir:repro                              {:NodoOpFuncionesNativas nodo = new NodoOpFuncionesNativas(); nodo.capturarReproducir((SentenciaReproducir) repro); RESULT = nodo;:}
+                | def_fun_esperar:repro                                 {:NodoOpFuncionesNativas nodo = new NodoOpFuncionesNativas(); nodo.capturarReproducir((SentenciaReproducir) repro); RESULT = nodo;:} 
+                | def_fun_ordenar:funOrder                              {:NodoOpFuncionesNativas nodo = new NodoOpFuncionesNativas(); nodo.capturarOrdenaar((FuncionesArreglo) funOrder); RESULT = nodo;:}
+                | def_fun_sumarizar:sumari                               {:NodoOpFuncionesNativas nodo = new NodoOpFuncionesNativas(); nodo.capturarOrdenaar((FuncionesArreglo) sumari); RESULT = nodo;:}
+                | def_fun_longitud:longs                                 {:NodoOpFuncionesNativas nodo = new NodoOpFuncionesNativas(); nodo.capturarOrdenaar((FuncionesArreglo) longs); RESULT = nodo;:}                                                                                                  
                 ;
  
 
@@ -291,12 +299,16 @@ comodin_param ::= tipo ID:id                                                    
         | sentencias_bifuraciones:sentbifu                                              {:RESULT = sentbifu;:}
         | RETORNA:tok asignacion:op PUNTOCOMA                                            {:RESULT = new SentenciaRetorna((Operation) op, (Token) tok, errorsSemanticos);:}
         | fun_mensaje:funMjs                                                            {:RESULT = funMjs;:}
-        | def_fun_reproducir:repro                                                      {:RESULT = repro;:}
-        | def_fun_esperar:repro                                                         {:RESULT = repro;:}
+        | def_fun_reproducir:repro   PUNTOCOMA                                                   {:RESULT = repro;:}
+        | def_fun_esperar:repro      PUNTOCOMA                                                   {:RESULT = repro;:}
         | decla_array_inicializado:arreglo                                              {:pista.setSizeArray(0); cont = 0; contDimes = 0; pista.getTableSimbolGoblal().getIds().clear(); RESULT = arreglo;:}
         | decla_arry:arreglo                                                            {:pista.setSizeArray(0); cont = 0; contDimes = 0; pista.getTableSimbolGoblal().getIds().clear(); RESULT = arreglo;:}
         | asig_arreglo:asig                                                             {:RESULT = asig;:}
-        | def_fun_ordenar
+        | def_fun_ordenar:orde PUNTOCOMA                                                {:RESULT = orde;:}
+        | def_fun_sumarizar:sumari   PUNTOCOMA                                                   {:RESULT = sumari;:}
+        | CONTINUAR                                                                     {:RESULT = new SentenciaContinuar();:}
+        | def_fun_longitud:longs       PUNTOCOMA                                          {:RESULT = longs;:}                                                         
+        | SALIR                                                                         {:RESULT = new SentenciaContinuar();:}
         ;
 
 /*gramatica para asiganar variables ya declaradas esto dentro de las funciones o metodos*/
@@ -395,8 +407,8 @@ def_switch ::= SWITCH PARENTESISA ID:id PARENTESISC LLAVEA cases:arryC LLAVEC   
         ;
 
 /*Gramatica para casos */
- caso_sw ::= CASO terminales_switch:dat DOPUNTO sentencias:inst                                 {:RESULT = new CasoSwitch((ArrayList<Instruccions>)inst,(Dato) dat);:}         
-            | DEFAULT DOPUNTO sentencias:inst                                                   {:RESULT = new CasoSwitch((ArrayList<Instruccions>)inst,null);:}             
+ caso_sw ::= CASO terminales_switch:dat DOPUNTO sentencias_sw:inst                                 {:RESULT = new CasoSwitch((ArrayList<Instruccions>)inst,(Dato) dat);:}         
+            | DEFAULT DOPUNTO sentencias_sw:inst                                                   {:RESULT = new CasoSwitch((ArrayList<Instruccions>)inst,null);:}             
             | error LLAVEC
             ;
 
@@ -410,6 +422,30 @@ terminales_switch ::= ID:val                                    {:RESULT = new D
                 | FALSO:val                                     {:RESULT = new Dato(true, (Token) val, TipoDato.BOOLEAN);:}                                                     
                 | VERDADERO:val                                 {:RESULT = new Dato(true, (Token) val, TipoDato.BOOLEAN);:}                                                     
                 ;
+
+/*Gramatica para sentencias, pueden venir dentro de una funcion o metodo */
+ sentencias_sw ::= sentencia_sw:sent sentencias_sw:array                                         {: ArrayList<Instruccions> arr= (ArrayList<Instruccions>)array; arr.add(0,(Instruccions)sent); RESULT = arr;:}                                          
+        |                                                                                        {:RESULT = new ArrayList<Instruccions>();:}
+        ;
+
+/*Gramatica para sentencia, esta puede venir dentro de las funciones o metodos  */
+ sentencia_sw ::=  variables_fun:array                                                     {:RESULT = new DeclaracionVar((ArrayList<Variable>)array,asigna,(Operation) instrOp) ;:}
+        | asignacion_var_fun:asig                                                       {:RESULT = asig;:}
+        | op_incremt_decremet_fun:decrInc PUNTOCOMA                                     {:RESULT = decrInc;:}
+        | llamada_metod:metod PUNTOCOMA                                                 {: parametroLllmada.clear(); RESULT = new LlamadaFuncion((NodoOperation) metod);:}
+        | sentencias_bifuraciones:sentbifu                                              {:RESULT = sentbifu;:}
+        | RETORNA:tok asignacion:op PUNTOCOMA                                            {:RESULT = new SentenciaRetorna((Operation) op, (Token) tok, errorsSemanticos);:}
+        | fun_mensaje:funMjs                                                            {:RESULT = funMjs;:}
+        | def_fun_reproducir:repro     PUNTOCOMA                                                 {:RESULT = repro;:}
+        | def_fun_esperar:repro        PUNTOCOMA                                                 {:RESULT = repro;:}
+        | decla_array_inicializado:arreglo                                              {:pista.setSizeArray(0); cont = 0; contDimes = 0; pista.getTableSimbolGoblal().getIds().clear(); RESULT = arreglo;:}
+        | decla_arry:arreglo                                                            {:pista.setSizeArray(0); cont = 0; contDimes = 0; pista.getTableSimbolGoblal().getIds().clear(); RESULT = arreglo;:}
+        | asig_arreglo:asig                                                             {:RESULT = asig;:}
+        | def_fun_ordenar:orde PUNTOCOMA                                                {:RESULT = orde;:}
+        | def_fun_sumarizar:sumari   PUNTOCOMA                                           {:RESULT = sumari;:}
+        | def_fun_longitud:longs       PUNTOCOMA                                          {:RESULT = longs;:}                                                         
+        | CONTINUAR                                                                     {:RESULT = new SentenciaContinuar();:}
+        ;
 
 
 /*Gramatica para FOR  */
@@ -462,7 +498,7 @@ def_fun_principal ::= PRINCIPAL:id PARENTESISA PARENTESISC  LLAVEA sentencias:in
                 ;
 
 /*Gramatica para funcion nativa Reproducir*/
-def_fun_reproducir ::= REPRODUCIR PARENTESISA def_sentencias_repro:repro  PARENTESISC PUNTOCOMA         {:RESULT = repro;:}
+def_fun_reproducir ::= REPRODUCIR PARENTESISA def_sentencias_repro:repro  PARENTESISC          {:RESULT = repro;:}
                 ;
 
 def_sentencias_repro ::= def_nota_musical:not COMA asignacion:oct COMA asignacion:milis COMA asignacion:can       {:RESULT = new SentenciaReproducir((String) not, (Operation) oct, (Operation) milis, (Operation) can) ;:}
@@ -485,7 +521,7 @@ def_nota_musical ::= NOTA_DO:nota                                    {:RESULT = 
                 ;
 
 /*gramatica para representacion de funcion esperar*/
-def_fun_esperar ::= ESPERAR PARENTESISA asignacion:milis  COMA asignacion:can PARENTESISC PUNTOCOMA                       {:RESULT = new SentenciaReproducir("Z", (Operation) milis, (Operation) can) ;:}
+def_fun_esperar ::= ESPERAR PARENTESISA asignacion:milis  COMA asignacion:can PARENTESISC                        {:RESULT = new SentenciaReproducir("Z", (Operation) milis, (Operation) can) ;:}
                 ;
 
 /*gramatica para el manejo de arreglos*/
@@ -554,12 +590,22 @@ valor_arreglo ::= ID:id  CORCHETA def_dimension_arreglo:arr                     
                 ;
 
 /*Gramatica para Oredenar*/
-def_fun_ordenar ::= ORDENAR PARENTESISA ID COMA formaOrdenar PARENTESISC PUNTOCOMA
+def_fun_ordenar ::= ORDENAR PARENTESISA ID:id COMA formaOrdenar:tipoOr PARENTESISC  {:RESULT = new FuncionesArreglo((Token) id, (TipoOrdenamiento) tipoOr);:}
                 ;
 
-formaOrdenar ::= ASCENDENTE
-        | DESCENDENTE
-        | PARES
-        | IMPARES
-        | PRIMOS
+formaOrdenar ::= ASCENDENTE                             {:RESULT = TipoOrdenamiento.ASCENDENTE;:}
+        | DESCENDENTE                                   {:RESULT = TipoOrdenamiento.DESCENDENTE;:}
+        | PARES                                         {:RESULT = TipoOrdenamiento.PARES;:}
+        | IMPARES                                       {:RESULT = TipoOrdenamiento.IMPARES;:}
+        | PRIMOS                                        {:RESULT = TipoOrdenamiento.PRIMOS;:}
         ;
+
+/*Gramatica para Oredenar*/
+def_fun_sumarizar ::= SUMARIZAR PARENTESISA ID:id PARENTESISC                   {:RESULT = new FuncionesArreglo((Token) id);:}
+       ;
+
+/*Gramatica para Oredenar*/
+def_fun_longitud ::= LONGITUD PARENTESISA ID:id PARENTESISC                   {:RESULT = new FuncionesArreglo((Token) id, true);:}
+                |  LONGITUD PARENTESISA CONT_CADENA:id PARENTESISC                   {:RESULT = new FuncionesArreglo((String) id.getLexeme(), true);:}
+       ;
+

@@ -7,7 +7,7 @@ import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Variable implements Serializable{
+public class Variable implements Serializable {
 
     private String nombre;
     private TipoDato tipo;
@@ -24,7 +24,7 @@ public class Variable implements Serializable{
         this.inicializado = inicializado;
         this.dato = new Dato(inicializado, token, tipo);
     }
-    
+
     public Variable(Token token, TipoDato tipo, String nombre) {
         this.token = token;
         this.nombre = nombre;
@@ -199,7 +199,12 @@ public class Variable implements Serializable{
         if (datoNuevo.getTipoDato() == TipoDato.BOOLEAN) {
             this.dato.setBooleano(datoNuevo.isBooleano());
         } else {
-            errorsSemanticos.add(new ErrorSemantico(datoNuevo.getToken(), "Las variables booleanas no aceptan otro tipo de dato que no sea booleano"));
+            if (datoNuevo.getTipoDato() == TipoDato.ENTERO && (datoNuevo.getNumero() == 1 || datoNuevo.getNumero() == 0)) {
+                this.dato.setBooleano(datoNuevo.getNumero() == 1 );
+            } else {
+                errorsSemanticos.add(new ErrorSemantico(datoNuevo.getToken(), "Las variables booleanas no aceptan otro tipo de dato que no sea booleano"));
+
+            }
         }
 
     }

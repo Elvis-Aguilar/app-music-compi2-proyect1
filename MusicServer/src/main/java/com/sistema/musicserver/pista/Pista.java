@@ -154,7 +154,7 @@ public class Pista implements Serializable {
      */
     public ArrayList<Operation> unirOperaciones(ArrayList<Operation> operations1, ArrayList<Operation> operations2, Token token) {
         if (this.sizeArray == 0) {
-            this.sizeArray = operations1.size();
+            this.sizeArray = operations2.size();
         }
         if (this.sizeArray != operations1.size()) {
 

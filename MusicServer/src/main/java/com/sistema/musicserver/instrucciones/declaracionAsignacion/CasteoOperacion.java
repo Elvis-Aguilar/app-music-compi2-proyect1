@@ -886,7 +886,7 @@ public class CasteoOperacion implements Serializable{
         switch (this.dato2.getTipoDato()) {
             case CADENA:
                 //error no se puede sumar una decimal con una cadena
-                this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "no se puede sumar una decimal con una cadena"));
+                this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "no se puede sumar una Numero con una cadena"));
 
                 return dato1.getNumero();
             case BOOLEAN:

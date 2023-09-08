@@ -51,7 +51,7 @@ public class CasoSwitch extends Instruccions implements Serializable{
             return true;
         }
         if (this.dato.isIsVariable()) {
-            this.dato = this.tablaSimbol.getDato(dato.getToken(), dato.getNombreVar());
+            this.dato.setValorDato(this.tablaSimbol.getDato(dato.getToken(), dato.getNombreVar()));
         }
         if (this.dato.getTipoDato() == this.datoSwintch.getTipoDato()) {
             return this.comprobarDato();

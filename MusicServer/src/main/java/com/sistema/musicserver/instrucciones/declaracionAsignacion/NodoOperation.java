@@ -36,6 +36,10 @@ public class NodoOperation implements Serializable{
         this.opLeft = null;
         this.opRight = null;
     }
+    
+    public NodoOperation() {
+        
+    }
 
     public NodoOperation(TipoOperacion tipoOperacion, NodoOperation opLeft, NodoOperation opRight) {
         this.tipoOperacion = tipoOperacion;
