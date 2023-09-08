@@ -5,13 +5,14 @@ import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import com.sistema.musicserver.tablaSimbol.Variable;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class SentenciaSwitch extends Instruccions{
+public class SentenciaSwitch extends Instruccions implements Serializable{
 
     private ArrayList<CasoSwitch> casos;
     private Variable varSwintch;

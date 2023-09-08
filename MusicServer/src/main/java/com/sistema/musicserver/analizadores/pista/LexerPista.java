@@ -6,7 +6,8 @@
 //package ;
 package com.sistema.musicserver.analizadores.pista;
 import java_cup.runtime.*;
-
+import com.sistema.musicserver.errors.ErrorLexicos;
+import com.sistema.musicserver.errors.ErroresSingleton;
 
 // See https://github.com/jflex-de/jflex/issues/222
 @SuppressWarnings("FallThrough")
@@ -1022,7 +1023,7 @@ public class LexerPista implements java_cup.runtime.Scanner {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { System.out.println("error lexico "+ yytext());
+            { ErroresSingleton.getInstance().getErroresLexicos().add(new ErrorLexicos(new Token(yytext(), yyline+1, yycolumn+1), "El Token no es reconocido por el lenguaje"));
             }
             // fall through
           case 89: break;

@@ -6,13 +6,14 @@ import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class SentenciaIF extends Instruccions {
+public class SentenciaIF extends Instruccions implements Serializable{
 
     private ArrayList<Instruccions> instruccions;
     private Operation condicion;

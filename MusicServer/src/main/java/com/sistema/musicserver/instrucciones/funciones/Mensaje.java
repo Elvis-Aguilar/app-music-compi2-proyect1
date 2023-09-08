@@ -6,13 +6,14 @@ import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class Mensaje extends Instruccions{
+public class Mensaje extends Instruccions implements Serializable{
     
     private Operation operation;
     private TablaSimbol  TablaSimbol ;

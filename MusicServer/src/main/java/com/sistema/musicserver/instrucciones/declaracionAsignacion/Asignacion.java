@@ -4,9 +4,10 @@ import com.sistema.musicserver.analizadores.pista.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Asignacion extends Instruccions {
+public class Asignacion extends Instruccions implements Serializable{
 
     private int indiceInicial;
     private int indiceFinal;

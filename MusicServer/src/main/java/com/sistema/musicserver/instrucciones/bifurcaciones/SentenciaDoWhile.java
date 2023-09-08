@@ -7,13 +7,14 @@ import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import com.sistema.musicserver.instrucciones.funciones.FunMensaje;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class SentenciaDoWhile extends Instruccions {
+public class SentenciaDoWhile extends Instruccions implements Serializable{
 
     private ArrayList<Instruccions> instruccions;
     private Operation condicion;

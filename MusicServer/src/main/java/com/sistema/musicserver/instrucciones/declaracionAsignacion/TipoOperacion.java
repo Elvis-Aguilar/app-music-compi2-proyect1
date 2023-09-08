@@ -1,6 +1,8 @@
 package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 
-public enum TipoOperacion {
+import java.io.Serializable;
+
+public enum TipoOperacion implements Serializable{
     SUMA,
     RESTA,
     MULTIPLICACION,

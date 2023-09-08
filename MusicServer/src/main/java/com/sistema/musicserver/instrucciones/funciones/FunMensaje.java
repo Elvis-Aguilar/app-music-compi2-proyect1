@@ -1,13 +1,14 @@
 package com.sistema.musicserver.instrucciones.funciones;
 
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class FunMensaje{
+public class FunMensaje implements Serializable{
 
     private static FunMensaje instance;
     private ArrayList<String> mensajes = new ArrayList<>();
@@ -47,6 +48,13 @@ public class FunMensaje{
 
         }
 
+    }
+    
+    public String getContenido(){
+        String result = "";
+        result = mensajes.stream().map(mensaje -> mensaje +"\n").reduce(result, String::concat);
+        
+        return result;
     }
 
 }

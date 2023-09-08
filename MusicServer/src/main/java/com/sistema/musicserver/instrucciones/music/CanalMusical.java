@@ -1,11 +1,13 @@
 
 package com.sistema.musicserver.instrucciones.music;
 
+import java.io.Serializable;
+
 /**
  *
  * @author elvis_agui
  */
-public class CanalMusical {
+public class CanalMusical implements Serializable{
     private int canal;
     private StringBuilder musicString = new StringBuilder();
 

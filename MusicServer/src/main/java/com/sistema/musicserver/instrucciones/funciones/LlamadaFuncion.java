@@ -5,12 +5,13 @@ import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import java.util.ArrayList;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.NodoOperation;
+import java.io.Serializable;
 
 /**
  *
  * @author elvis_agui
  */
-public class LlamadaFuncion extends Instruccions {
+public class LlamadaFuncion extends Instruccions implements Serializable{
 
     private NodoOperation rootOperation;
 

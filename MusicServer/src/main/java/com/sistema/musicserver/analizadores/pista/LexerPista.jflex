@@ -2,7 +2,8 @@
 //package ;
 package com.sistema.musicserver.analizadores.pista;
 import java_cup.runtime.*;
-
+import com.sistema.musicserver.errors.ErrorLexicos;
+import com.sistema.musicserver.errors.ErroresSingleton;
 %%
 /*segunda seccion configuracion*/
 %class LexerPista
@@ -245,4 +246,4 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 
 }
 
-[^] {System.out.println("error lexico "+ yytext());}
+[^] {ErroresSingleton.getInstance().getErroresLexicos().add(new ErrorLexicos(new Token(yytext(), yyline+1, yycolumn+1), "El Token no es reconocido por el lenguaje"));}

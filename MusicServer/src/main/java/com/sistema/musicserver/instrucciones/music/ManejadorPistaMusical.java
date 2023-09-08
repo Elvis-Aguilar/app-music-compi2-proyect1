@@ -1,6 +1,7 @@
 package com.sistema.musicserver.instrucciones.music;
 
 import com.sistema.musicserver.errors.ErrorSemantico;
+import java.io.Serializable;
 import java.util.ArrayList;
 import org.jfugue.pattern.Pattern;
 
@@ -8,7 +9,7 @@ import org.jfugue.pattern.Pattern;
  *
  * @author elvis_agui
  */
-public class ManejadorPistaMusical {
+public class ManejadorPistaMusical implements Serializable{
 
     private ArrayList<CanalMusical> canales = new ArrayList<>();
     private static ManejadorPistaMusical instance;
@@ -42,20 +43,13 @@ public class ManejadorPistaMusical {
 
     public PistaMusical pistaMusic(String nombre, ArrayList<ErrorSemantico> errorsSemanticos) {
         PistaMusical pista = null;
-        if (!errorsSemanticos.isEmpty()) {
+        if (!errorsSemanticos.isEmpty() || this.canales.isEmpty()) {
             return pista;
         }
-        if (this.canales.isEmpty()) {
-            return pista;
-        }
-        Pattern combinedPattern = new Pattern();
-        int index = 0;
-        for (CanalMusical canale : canales) {
-            Pattern patten = new Pattern("V" + index + " " + canale.getMusicString().toString());
-            combinedPattern.add(patten);
-            index++;
-        }
-        pista = new PistaMusical(combinedPattern, nombre);
+       
+        
+        pista = new PistaMusical(this.canales, nombre);
+        this.canales.clear();
         return pista;
     }
 

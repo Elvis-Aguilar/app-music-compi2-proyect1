@@ -4,9 +4,10 @@ import com.sistema.musicserver.analizadores.pista.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Variable {
+public class Variable implements Serializable{
 
     private String nombre;
     private TipoDato tipo;

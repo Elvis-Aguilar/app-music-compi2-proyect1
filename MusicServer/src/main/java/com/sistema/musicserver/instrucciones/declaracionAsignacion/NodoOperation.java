@@ -5,9 +5,10 @@ import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.instrucciones.funciones.Funcion;
 import com.sistema.musicserver.pista.Pista;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class NodoOperation {
+public class NodoOperation implements Serializable{
 
     private Dato dato;
     private TipoOperacion tipoOperacion;

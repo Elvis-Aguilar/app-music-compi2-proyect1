@@ -7,13 +7,14 @@ import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class SentenciaReproducir extends Instruccions {
+public class SentenciaReproducir extends Instruccions implements Serializable{
 
     private String Nota;
     private Operation octava;

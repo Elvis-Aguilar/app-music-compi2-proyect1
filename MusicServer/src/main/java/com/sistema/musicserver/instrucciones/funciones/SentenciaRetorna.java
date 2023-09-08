@@ -6,13 +6,14 @@ import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Asignacion;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class SentenciaRetorna extends Instruccions {
+public class SentenciaRetorna extends Instruccions implements Serializable{
 
     private TablaSimbol tableSimbol;
     private Operation operation;

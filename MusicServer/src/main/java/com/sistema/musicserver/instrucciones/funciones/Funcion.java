@@ -6,13 +6,14 @@ import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import com.sistema.musicserver.tablaSimbol.Variable;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class Funcion extends Instruccions {
+public class Funcion extends Instruccions implements Serializable{
 
     private ArrayList<Variable> parametros;
     private TablaSimbol tableSimbol;

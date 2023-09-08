@@ -7,9 +7,9 @@ import com.sistema.musicserver.analizadores.pista.Token;
  *
  * @author elvis_agui
  */
-public class ErrorLexSintc extends Errors{
+public class ErrorLexicos extends Errors{
     
-    public ErrorLexSintc(Token token, String descripcion) {
+    public ErrorLexicos(Token token, String descripcion) {
         super(token, descripcion);
     }
     

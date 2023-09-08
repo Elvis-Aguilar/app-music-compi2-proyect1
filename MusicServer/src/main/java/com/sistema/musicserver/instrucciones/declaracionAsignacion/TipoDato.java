@@ -1,6 +1,8 @@
 package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 
-public enum TipoDato {
+import java.io.Serializable;
+
+public enum TipoDato implements Serializable{
     ENTERO,
     DECIMAL,
     BOOLEAN,

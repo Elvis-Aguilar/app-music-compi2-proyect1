@@ -2,13 +2,14 @@ package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 
 import com.sistema.musicserver.analizadores.pista.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class Arreglo {
+public class Arreglo implements Serializable{
 
     private Token Token;
     private TipoDato tipoArreglo;

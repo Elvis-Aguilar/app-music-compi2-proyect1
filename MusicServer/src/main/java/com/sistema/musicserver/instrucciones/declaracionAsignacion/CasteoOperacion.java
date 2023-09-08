@@ -1,13 +1,14 @@
 package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 
 import com.sistema.musicserver.errors.ErrorSemantico;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author elvis_agui
  */
-public class CasteoOperacion {
+public class CasteoOperacion implements Serializable{
 
     private Dato dato1;
     private Dato dato2;

@@ -3,13 +3,14 @@ package com.sistema.musicserver.instrucciones.declaracionAsignacion;
 import com.sistema.musicserver.analizadores.pista.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * clase para representar un dato primitivo como: numero, cadena etc, asi mismo
  * representar la variable si fuese el caso, como funciones.
  */
-public class Dato {
+public class Dato implements Serializable{
 
     private String cadena;
     private double decimal;

@@ -1,8 +1,10 @@
 package com.sistema.musicserver.analizadores.pista;
 
+import java.io.Serializable;
 
 
-public class Token {
+
+public class Token implements Serializable{
 
     private final String lexeme;
     private final int line;

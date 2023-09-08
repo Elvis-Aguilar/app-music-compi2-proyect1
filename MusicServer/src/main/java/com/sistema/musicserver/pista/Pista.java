@@ -2,6 +2,7 @@ package com.sistema.musicserver.pista;
 
 import com.sistema.musicserver.analizadores.pista.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
+import com.sistema.musicserver.errors.ErroresSingleton;
 import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Asignacion;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
@@ -10,13 +11,15 @@ import com.sistema.musicserver.instrucciones.declaracionAsignacion.Operation;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import com.sistema.musicserver.instrucciones.funciones.FunMensaje;
 import com.sistema.musicserver.instrucciones.funciones.Funcion;
+import com.sistema.musicserver.instrucciones.music.HiloReproductorDePista;
 import com.sistema.musicserver.instrucciones.music.ManejadorPistaMusical;
 import com.sistema.musicserver.instrucciones.music.PistaMusical;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import com.sistema.musicserver.tablaSimbol.Variable;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Pista {
+public class Pista implements Serializable {
 
     private String nombre;
     private TablaSimbol tableSimbolGoblal;
@@ -27,13 +30,14 @@ public class Pista {
     private int sizeArray = 0;
     private ArrayList<Token> extendiende;
     private PistaMusical pistaMusical;
+    private String codigoFuente;
 
     public Pista(String nombre, TablaSimbol tableSimbolGoblal, ArrayList<ErrorSemantico> errorsSemanticos) {
         this.nombre = nombre;
         this.tableSimbolGoblal = tableSimbolGoblal;
         this.errorsSemanticos = errorsSemanticos;
     }
-    
+
     public Pista(ArrayList<Token> extendiende, String nombre, TablaSimbol tableSimbolGoblal, ArrayList<ErrorSemantico> errorsSemanticos) {
         this.nombre = nombre;
         this.tableSimbolGoblal = tableSimbolGoblal;
@@ -42,14 +46,13 @@ public class Pista {
         this.accionExtender();
     }
 
-    public Pista(PistaMusical pistaMusical, ArrayList<Funcion> funciones, String nombre, TablaSimbol tableSimbolGoblal) {
+    public Pista(String codigoFuente,PistaMusical pistaMusical, ArrayList<Funcion> funciones, String nombre, TablaSimbol tableSimbolGoblal) {
         this.nombre = nombre;
         this.tableSimbolGoblal = tableSimbolGoblal;
         this.funciones = funciones;
         this.pistaMusical = pistaMusical;
+        this.codigoFuente = codigoFuente;
     }
-    
-    
 
     public void carpturarVariablesGlobales(TipoDato tipo, boolean inicializado, Operation op) {
         if (inicializado) {
@@ -76,8 +79,6 @@ public class Pista {
         tableSimbolGoblal.getIds().clear();
         this.sizeArray = 0;
     }
-
- 
 
     //TODO: incorporar la logica de la busquda de esta variable en el resto de tablas que vaya a extender
     public void capturarAsignacion(Token id, Operation op) {
@@ -117,7 +118,7 @@ public class Pista {
 
     public boolean comprobarTipos(ArrayList<Operation> parametros, ArrayList<Variable> varParametros, Token id, TablaSimbol tabla) {
         boolean conciden = true;
-        int index = 0;        
+        int index = 0;
         for (Variable varParametro : varParametros) {
             Dato dato = parametros.get(index).execute(errorsSemanticos, tabla);
             if (varParametro.getTipo() != dato.getTipoDato()) {
@@ -131,11 +132,13 @@ public class Pista {
     }
 
     public void referenciarTablasPadres() {
-        this.funciones.forEach(fun -> {
-            fun.actionReferenciarTabla(tableSimbolGoblal);
-        });
-        if (this.funPrincipal != null) {
-            this.funPrincipal.actionReferenciarTabla(tableSimbolGoblal);
+        if (ErroresSingleton.getInstance().noHayErrores()) {
+            this.funciones.forEach(fun -> {
+                fun.actionReferenciarTabla(tableSimbolGoblal);
+            });
+            if (this.funPrincipal != null) {
+                this.funPrincipal.actionReferenciarTabla(tableSimbolGoblal);
+            }
         }
 
     }
@@ -167,24 +170,34 @@ public class Pista {
         this.instrucciones.add(manejador);
         this.tableSimbolGoblal.getIds().clear();
     }
-    
-    public void autoguardar(){
-        this.pistaMusical = ManejadorPistaMusical.getPistaMusical().pistaMusic(nombre, errorsSemanticos);
-        PistasCompiladas.getInstancePistasActivacion().push(this, errorsSemanticos);
-        if (null != pistaMusical) {
-            pistaMusical.ejecutarMusica();
+
+    public void autoguardar() {
+        if (PistasCompiladas.getInstancePistasActivacion().sobreEscribir(nombre, errorsSemanticos)) {
+            this.pistaMusical = ManejadorPistaMusical.getPistaMusical().pistaMusic(nombre, errorsSemanticos);
+            PistasCompiladas.getInstancePistasActivacion().push(this, errorsSemanticos);
         }
     }
-    
-    public void accionExtender(){
+
+    public void accionExtender() {
         for (Token token : extendiende) {
             Pista tmpPista = PistasCompiladas.getInstancePistasActivacion().getPistaExtends(token);
-            if ( null == tmpPista) {
+            if (null == tmpPista) {
                 this.errorsSemanticos.add(new ErrorSemantico(token, "La pista a extender no existe en el registro de pistas compiladas"));
                 break;
             }
             this.tableSimbolGoblal.extenderDeOtraTabla(tmpPista.tableSimbolGoblal.getVariables(), tmpPista.tableSimbolGoblal.getArreglos());
             this.funciones.addAll(tmpPista.getFunciones());
+        }
+    }
+
+    public void realizarAccionesSemanticas() {
+        if (ErroresSingleton.getInstance().noHayErrores()) {
+            instrucciones.forEach(instruccione -> {
+                instruccione.execute(errorsSemanticos);
+            });
+            if (null != this.funPrincipal) {
+                this.funPrincipal.execute(errorsSemanticos);
+            }
         }
     }
 
@@ -255,6 +268,14 @@ public class Pista {
     public void setPistaMusical(PistaMusical pistaMusical) {
         this.pistaMusical = pistaMusical;
     }
+
+    public String getCodigoFuente() {
+        return codigoFuente;
+    }
+
+    public void setCodigoFuente(String codigoFuente) {
+        this.codigoFuente = codigoFuente;
+    }
     
     
 
@@ -281,9 +302,4 @@ public class Pista {
 
     }
 
-//    public void tostringstga(ArrayList<String> arry){
-//        arry.forEach(ar -> {
-//            System.out.println(ar);
-//        });
-//    }
 }

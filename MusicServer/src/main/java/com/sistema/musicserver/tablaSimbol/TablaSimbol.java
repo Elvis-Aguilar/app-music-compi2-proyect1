@@ -5,10 +5,11 @@ import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Arreglo;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
+import java.io.Serializable;
 
 import java.util.ArrayList;
 
-public class TablaSimbol {
+public class TablaSimbol implements Serializable{
 
     private ArrayList<Token> ids = new ArrayList<>();
     private ArrayList<Variable> variables = new ArrayList<>();

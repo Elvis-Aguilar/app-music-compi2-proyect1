@@ -7,6 +7,7 @@ package com.sistema.musicserver.instrucciones;
 
 import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author elvis_agui
  */
-public abstract class Instruccions {
+public abstract class Instruccions implements Serializable{
     
     
     public abstract void execute(ArrayList<ErrorSemantico> errorsSemanticos);
