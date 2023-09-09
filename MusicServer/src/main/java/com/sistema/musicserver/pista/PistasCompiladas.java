@@ -1,8 +1,9 @@
 package com.sistema.musicserver.pista;
 
-import com.sistema.musicserver.analizadores.pista.Token;
+import com.sistema.musicserver.analizadores.Token;
 import com.sistema.musicserver.archivos.ManejadorArchivos;
 import com.sistema.musicserver.errors.ErrorSemantico;
+import com.sistema.musicserver.errors.ErroresSingleton;
 import com.sistema.musicserver.instrucciones.music.PistaMusical;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class PistasCompiladas implements Serializable {
     private void pushPistaEnLista(PistaMusical pistaMus, Lista lista) {
         int index = -1;
         for (int i = 0; i < lista.getListasMusicales().size(); i++) {
-            if (lista.getListasMusicales().get(0).getNombre().equals(pistaMus.getNombre())) {
+            if (lista.getListasMusicales().get(i).getNombre().equals(pistaMus.getNombre())) {
                 index = i;
                 break;
             }
@@ -179,6 +180,25 @@ public class PistasCompiladas implements Serializable {
             this.guardarEnBinario();
         }
     }
+    
+    
+    public void guardarNuevaLista(Lista listNueva) {
+        boolean guardar = true;
+        for (Lista lista : listas) {
+            if (lista.getNombre().equals(listNueva.getNombre())) {
+                JOptionPane.showMessageDialog(null, " Lista ya Existente, revisa los errores!!");
+                ErroresSingleton.getInstance().getErroresSemanticos().add(new ErrorSemantico(new Token(listNueva.getNombre(), 0, 0), "Pista ya Existente"));
+                guardar = false;
+                break;
+            }
+        }
+        if (guardar) {
+            Lista lis = new Lista(listNueva.getListasMusicales(), listNueva.getNombre());
+            this.listas.add(lis);
+            JOptionPane.showMessageDialog(null, " Lista Creada con exito!!");
+            this.guardarEnBinario();
+        }
+    }
 
     public void guardarEnBinario() {
         ManejadorArchivos archivos = new ManejadorArchivos();
@@ -193,6 +213,24 @@ public class PistasCompiladas implements Serializable {
                 break;
             }
         }
+    }
+    
+    public PistaMusical getpista(Token id){
+        PistaMusical pistTmp = null;
+        if (listas.isEmpty()) {
+            return null;
+        }
+        for (PistaMusical PistaMu : listas.get(0).getListasMusicales()) {
+            if (PistaMu.getNombre().equals(id.getLexeme())) {
+                pistTmp = PistaMu;
+                break;
+            }
+        }
+        if (pistTmp == null) {
+            ErroresSingleton.getInstance().getErroresSemanticos().add(new ErrorSemantico(id, "Pista no existente, revice que esta pista tenga pista musical como tal"));
+        }
+        
+        return pistTmp;
     }
 
     public ArrayList<Lista> getListas() {

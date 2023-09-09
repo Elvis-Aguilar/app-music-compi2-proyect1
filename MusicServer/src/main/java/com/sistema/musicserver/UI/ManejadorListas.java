@@ -38,12 +38,15 @@ public class ManejadorListas {
         jlist.setModel(listModel);
         Lista lista = PistasCompiladas.getInstancePistasActivacion().getListas().get(index);
         lista.getListasMusicales().forEach(lsi -> {
-            listModel.addElement(lsi.getNombre());
+            listModel.addElement(String.format("%-15s %-15s %15s",
+                    lsi.getNombre(),
+                    "seg: " + convertirSegundos(lsi.getMilisTotal()),
+                    "milis: " + lsi.getMilisTotal()));
         });
         return lista;
     }
-    
-    public Lista mostrarPistasDeLaLista(JList<String> jlist,Lista lista) {
+
+    public Lista mostrarPistasDeLaLista(JList<String> jlist, Lista lista) {
         DefaultListModel<String> listModel = new DefaultListModel<>();
         jlist.setModel(listModel);
         lista.getListasMusicales().forEach(lsi -> {
@@ -51,8 +54,11 @@ public class ManejadorListas {
         });
         return lista;
     }
-    
-    
+
+    private double convertirSegundos(int milis) {
+        double val = milis / 1000;
+        return (double) (Math.round(val * 100.00) / 100.00);
+    }
 
     public void limpiarJlist(JList<String> jlist) {
         DefaultListModel<String> listModel = new DefaultListModel<>();

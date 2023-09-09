@@ -26,7 +26,7 @@ public class ErroresSingleton {
     public void clear() {
         this.erroresLexicos.clear();
         this.erroresSemanticos.clear();
-        this.erroresSemanticos.clear();
+        this.erroresSintacticos.clear();
     }
 
     public boolean existenErrores(JTextArea areaTexto) {

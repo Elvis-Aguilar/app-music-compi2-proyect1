@@ -8,7 +8,7 @@ import java.util.ArrayList;
  *
  * @author elvis_agui
  */
-public class CasteoOperacion implements Serializable{
+public class CasteoOperacion implements Serializable {
 
     private Dato dato1;
     private Dato dato2;
@@ -79,7 +79,29 @@ public class CasteoOperacion implements Serializable{
             case XOR:
                 datoResult = operacionXOR();
                 break;
+            case ISNULO:
+                datoResult = isNulo();
+                break;
+            case NOT:
+                datoResult = not();
+                break;
         }
+        return datoResult;
+    }
+
+    private Dato not() {
+        Dato datoResult = new Dato(true, 0, TipoDato.BOOLEAN);
+        if (this.dato2.getTipoDato() == TipoDato.BOOLEAN) {
+            datoResult.setBooleano(!this.dato2.isBooleano());
+        }else{
+            errorsSemanticos.add(new ErrorSemantico(this.dato2.getToken(), "El operador NOT solo hacepta datos booleanos para su funcionamiento"));
+        }
+        return datoResult;
+    }
+
+    private Dato isNulo() {
+        Dato datoResult = new Dato(true, 0, TipoDato.BOOLEAN);
+        datoResult.setBooleano(this.dato2.isInicializado());
         return datoResult;
     }
 
@@ -460,7 +482,7 @@ public class CasteoOperacion implements Serializable{
 
         return datoResult;
     }
-    
+
     private Dato operacionAND() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         datoResult.setTipoDato(TipoDato.BOOLEAN);
@@ -472,7 +494,7 @@ public class CasteoOperacion implements Serializable{
 
         return datoResult;
     }
-    
+
     private Dato operacionNAND() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         datoResult.setTipoDato(TipoDato.BOOLEAN);
@@ -484,7 +506,7 @@ public class CasteoOperacion implements Serializable{
 
         return datoResult;
     }
-    
+
     private Dato operacionNOR() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         datoResult.setTipoDato(TipoDato.BOOLEAN);
@@ -496,7 +518,7 @@ public class CasteoOperacion implements Serializable{
 
         return datoResult;
     }
-    
+
     private Dato operacionXOR() {
         Dato datoResult = new Dato(true, 0, TipoDato.ENTERO);
         datoResult.setTipoDato(TipoDato.BOOLEAN);
@@ -904,15 +926,17 @@ public class CasteoOperacion implements Serializable{
 
     private boolean datoInicializado() {
         boolean inicializado = true;
-        if (!this.dato1.isInicializado()) {
-            //error variable no inicalizada
-            this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "Variable no inicializada"));
-            inicializado = false;
-        }
-        if (!this.dato2.isInicializado()) {
-            //error variable no inicalizada
-            this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "Variable no inicializada"));
-            inicializado = false;
+        if (tipoOp != TipoOperacion.ISNULO) {
+            if (!this.dato1.isInicializado()) {
+                //error variable no inicalizada
+                this.errorsSemanticos.add(new ErrorSemantico(dato1.getToken(), "Variable no inicializada"));
+                inicializado = false;
+            }
+            if (!this.dato2.isInicializado()) {
+                //error variable no inicalizada
+                this.errorsSemanticos.add(new ErrorSemantico(dato2.getToken(), "Variable no inicializada"));
+                inicializado = false;
+            }
         }
         return inicializado;
     }

@@ -1,4 +1,4 @@
-package com.sistema.musicserver.analizadores.pista;
+package com.sistema.musicserver.analizadores;
 
 import java.io.Serializable;
 

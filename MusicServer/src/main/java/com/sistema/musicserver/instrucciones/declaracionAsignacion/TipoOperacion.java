@@ -15,6 +15,8 @@ public enum TipoOperacion implements Serializable{
     MENOROI,
     NOTEQUALS,
     EQUALS,
+    ISNULO,
+    NOT,
     OR,
     AND,
     NAND,

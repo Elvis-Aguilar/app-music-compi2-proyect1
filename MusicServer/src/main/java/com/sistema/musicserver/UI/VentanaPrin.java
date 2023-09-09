@@ -5,8 +5,9 @@
  */
 package com.sistema.musicserver.UI;
 
-import com.sistema.musicserver.analizadores.pista.LexerPista;
-import com.sistema.musicserver.analizadores.pista.parser;
+import com.sistema.musicserver.analizadores.lista.LexerLista;
+import com.sistema.musicserver.analizadores.lista.ParserLista;
+import com.sistema.musicserver.errors.ErroresSingleton;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -17,8 +18,11 @@ import java.io.StringReader;
 public class VentanaPrin extends javax.swing.JFrame {
 
     
-    private parser parser;
-    private LexerPista lexer;
+//    private parserLista parserl;
+//    private LexerLista lexer;
+     
+    private ParserLista parserlis;
+    private LexerLista lexer;
     
     /**
      * Creates new form VentanaPrin
@@ -100,14 +104,17 @@ public class VentanaPrin extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         Reader reader = new StringReader(jTextArea1.getText());
-
-        this.lexer = new LexerPista(reader);
-        this.parser = new parser(lexer);
+        this.lexer = new LexerLista(reader);
+        this.parserlis = new ParserLista(lexer);
         try {
-            parser.parse();
+            parserlis.parse();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        ErroresSingleton.getInstance().getErroresSintacticos().forEach(err->{
+            System.out.println(err.getToken()+" "+err.getDescripcion());
+        
+        });
         
     }//GEN-LAST:event_jButton1ActionPerformed
 

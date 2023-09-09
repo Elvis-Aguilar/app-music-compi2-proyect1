@@ -4,6 +4,8 @@ package com.sistema.musicserver.analizadores.pista;
 import java_cup.runtime.*;
 import com.sistema.musicserver.errors.ErrorLexicos;
 import com.sistema.musicserver.errors.ErroresSingleton;
+import com.sistema.musicserver.analizadores.Token;
+
 %%
 /*segunda seccion configuracion*/
 %class LexerPista
@@ -140,6 +142,27 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
     }
     private String cadena ="";
 
+    public String limpiarCaracter(String lexema){
+        if (lexema.length()>1) {
+            String cara = ""+lexema.charAt(1);
+            switch(cara){
+                case "n":
+                    lexema = "\n";
+                    break;
+                case "t":
+                    lexema = "\t";
+                    break;
+                case "r":
+                    lexema = "\r";
+                    break;
+                case "f":
+                    lexema = "\f";
+                    break;
+            }
+            lexema = cara;
+        }
+        return lexema;
+    }
     
 %}
 
@@ -195,7 +218,7 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 {CARACTER}              { return symbol(sym.CARACTER,yytext());}
 {VERDADERO}             { return symbol(sym.VERDADERO,yytext());}
 {FALSO}                 { return symbol(sym.FALSO,yytext());}
-{CONT_CARACTER}         { return symbol(sym.CONT_CARACTER,yytext());}
+{CONT_CARACTER}         { return symbol(sym.CONT_CARACTER,limpiarCaracter(yytext()));}
 {CADENA}                { return symbol(sym.CADENA,yytext());}
 {VAR}                   { return symbol(sym.VAR,yytext());}
 {SINO}                  { return symbol(sym.SINO,yytext());}

@@ -61,7 +61,6 @@ public class ManejadorArchivos {
         try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(nombreArchivo))) {
             listas = (ArrayList<Lista>) entrada.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error la lectura del archivo Binario, de las listas :(");
         }
         return listas;

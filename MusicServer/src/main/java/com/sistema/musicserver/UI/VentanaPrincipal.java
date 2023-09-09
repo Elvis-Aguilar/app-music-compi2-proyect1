@@ -5,6 +5,8 @@
  */
 package com.sistema.musicserver.UI;
 
+import com.sistema.musicserver.analizadores.lista.LexerLista;
+import com.sistema.musicserver.analizadores.lista.ParserLista;
 import com.sistema.musicserver.analizadores.pista.LexerPista;
 import com.sistema.musicserver.analizadores.pista.parser;
 import com.sistema.musicserver.archivos.ManejadorArchivos;
@@ -26,6 +28,7 @@ import javax.swing.JOptionPane;
 public class VentanaPrincipal extends javax.swing.JFrame {
 
     private final NumeroLinea numeroLineaPista;
+    private final NumeroLinea numeroLineListas;
     private parser parser;
     private LexerPista lexer;
     private ManejadorArchivos menjdorArchivos;
@@ -40,6 +43,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private final ReportErroSemantico reportSemantico = new ReportErroSemantico();
     private final ManejadorTablas manejadorTable = new ManejadorTablas();
     private PistasActivacion pistaActivacion;
+    private ParserLista parserlis;
+    private LexerLista lexerLis;
 
     /**
      * Creates new form VentanaPrincipal
@@ -48,10 +53,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         initComponents();
         this.majeList = new ManejadorListas();
         this.numeroLineaPista = new NumeroLinea(LenguajePistajTextArea);
+        this.numeroLineListas = new NumeroLinea(LenguajeListasjTextArea);
         LenguajePistajScrollPane.setRowHeaderView(numeroLineaPista);
         this.majeList.mostrarListasJlist(ListaListasjList);
         this.majeList.mostrarPistasExistentes(pistasExistentesjList);
         pistaActivacion = new PistasActivacion(this.LenguajePistajTextArea);
+        jScrollPane6.setRowHeaderView(numeroLineListas);
+
     }
 
     /**
@@ -107,6 +115,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         crearNuevaListajButton = new javax.swing.JButton();
         nombreNuevaListajTextField = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
+        jPanel11 = new javax.swing.JPanel();
+        jPanel12 = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        LenguajeListasjTextArea = new javax.swing.JTextArea();
+        jButton2 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         CrearPistajMenuItem = new javax.swing.JMenuItem();
@@ -589,6 +602,60 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Edicion Listas-Pistas", jPanel8);
 
+        jPanel12.setBackground(new java.awt.Color(102, 102, 255));
+
+        jScrollPane6.setBackground(new java.awt.Color(255, 255, 255));
+
+        LenguajeListasjTextArea.setBackground(new java.awt.Color(255, 255, 255));
+        LenguajeListasjTextArea.setColumns(20);
+        LenguajeListasjTextArea.setFont(new java.awt.Font("Dialog", 2, 14)); // NOI18N
+        LenguajeListasjTextArea.setForeground(new java.awt.Color(0, 0, 0));
+        LenguajeListasjTextArea.setRows(5);
+        jScrollPane6.setViewportView(LenguajeListasjTextArea);
+
+        jButton2.setText("Compilar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
+        jPanel12.setLayout(jPanel12Layout);
+        jPanel12Layout.setHorizontalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane6)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
+                .addContainerGap(895, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(200, 200, 200))
+        );
+        jPanel12Layout.setVerticalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Editor codigo Listas", jPanel11);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -938,6 +1005,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         this.pistaActivacion.setVisible(true);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        ErroresSingleton.getInstance().clear();
+        Reader reader = new StringReader(LenguajeListasjTextArea.getText());
+        this.lexerLis = new LexerLista(reader);
+        this.parserlis = new ParserLista(lexerLis);
+        try {
+            parserlis.parse();
+            if (ErroresSingleton.getInstance().existenErrores(ConsolaPistasjTextArea1)) {
+                PistasCompiladas.getInstancePistasActivacion().guardarNuevaLista(parserlis.getLista());
+                parserlis.getLista().clear();
+                this.majeList.mostrarListasJlist(ListaListasjList);
+                this.majeList.mostrarPistasExistentes(pistasExistentesjList);
+                this.majeList.limpiarJlist(pistasListaReprojList);
+                if (ErroresSingleton.getInstance().existenErrores(ConsolaPistasjTextArea1)) {
+                    JOptionPane.showMessageDialog(null, "Compilado exitosa, para probar la pista puede ir al area de Biblioteca");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Compilacion no Exitosa, revisar los detalles de los reportes de errores");
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Compilacion no Exitosa, revisar los detalles de los reportes de errores");
+            this.ConsolaPistasjTextArea1.setText("Uff! se llego a un error critico en la compilacion: Revisa los reportes de errores, Semanticos, Lexicos y Sintancticos");
+            //ex.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     public void textoSalida() {
         String contenido = FunMensaje.getInstanceMensajes().getContenido();
         this.ConsolaPistasjTextArea1.setText(contenido);
@@ -947,6 +1041,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea ConsolaPistasjTextArea1;
     private javax.swing.JMenuItem CrearPistajMenuItem;
+    private javax.swing.JTextArea LenguajeListasjTextArea;
     private javax.swing.JScrollPane LenguajePistajScrollPane;
     private javax.swing.JTextArea LenguajePistajTextArea;
     private javax.swing.JList<String> ListaListasjList;
@@ -957,6 +1052,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton eliminarListajButton;
     private javax.swing.JButton eliminarPistadeListajButton;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -981,6 +1077,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemReportLEx;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -994,6 +1092,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton modificarListajButton;
     private javax.swing.JList<String> modificarListajList;

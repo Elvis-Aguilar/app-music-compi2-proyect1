@@ -5,6 +5,7 @@
 /*primer seccion codigo de usuario*/
 //package ;
 package com.sistema.musicserver.analizadores.pista;
+import com.sistema.musicserver.analizadores.Token;
 import java_cup.runtime.*;
 import com.sistema.musicserver.errors.ErrorLexicos;
 import com.sistema.musicserver.errors.ErroresSingleton;
@@ -613,6 +614,27 @@ public class LexerPista implements java_cup.runtime.Scanner {
     }
     private String cadena ="";
 
+    public String limpiarCaracter(String lexema){
+        if (lexema.length()>1) {
+            String cara = ""+lexema.charAt(1);
+            switch(cara){
+                case "n":
+                    lexema = "\n";
+                    break;
+                case "t":
+                    lexema = "\t";
+                    break;
+                case "r":
+                    lexema = "\r";
+                    break;
+                case "f":
+                    lexema = "\f";
+                    break;
+            }
+            lexema = cara;
+        }
+        return lexema;
+    }
     
 
 
@@ -1253,7 +1275,7 @@ public class LexerPista implements java_cup.runtime.Scanner {
             // fall through
           case 134: break;
           case 47:
-            { return symbol(sym.CONT_CARACTER,yytext());
+            { return symbol(sym.CONT_CARACTER,limpiarCaracter(yytext()));
             }
             // fall through
           case 135: break;

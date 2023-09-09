@@ -1,7 +1,7 @@
 
 package com.sistema.musicserver.errors;
 
-import com.sistema.musicserver.analizadores.pista.Token;
+import com.sistema.musicserver.analizadores.Token;
 
 /**
  *

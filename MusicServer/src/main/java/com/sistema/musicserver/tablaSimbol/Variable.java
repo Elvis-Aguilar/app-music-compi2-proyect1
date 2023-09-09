@@ -1,6 +1,6 @@
 package com.sistema.musicserver.tablaSimbol;
 
-import com.sistema.musicserver.analizadores.pista.Token;
+import com.sistema.musicserver.analizadores.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.Dato;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
