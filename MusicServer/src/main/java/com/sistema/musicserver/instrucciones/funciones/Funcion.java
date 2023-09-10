@@ -2,18 +2,20 @@ package com.sistema.musicserver.instrucciones.funciones;
 
 import com.sistema.musicserver.analizadores.Token;
 import com.sistema.musicserver.errors.ErrorSemantico;
+import com.sistema.musicserver.errors.ErroresSingleton;
 import com.sistema.musicserver.instrucciones.Instruccions;
 import com.sistema.musicserver.instrucciones.declaracionAsignacion.TipoDato;
 import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import com.sistema.musicserver.tablaSimbol.Variable;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  *
  * @author elvis_agui
  */
-public class Funcion extends Instruccions implements Serializable{
+public class Funcion extends Instruccions implements Serializable {
 
     private ArrayList<Variable> parametros;
     private TablaSimbol tableSimbol;
@@ -40,14 +42,23 @@ public class Funcion extends Instruccions implements Serializable{
         this.token = token;
         this.agregarParametroATableSimbol();
     }
-    
-    public Funcion(ArrayList<Variable> parametros, TablaSimbol tableSimbol, String nombre, Token token,ArrayList<Instruccions> instruccions) {
+
+    public Funcion(ArrayList<Variable> parametros, TablaSimbol tableSimbol, String nombre, Token token, ArrayList<Instruccions> instruccions) {
         this.parametros = parametros;
         this.tableSimbol = tableSimbol;
         this.nombre = nombre;
         this.token = token;
         this.instruccions = instruccions;
         this.agregarParametroATableSimbol();
+    }
+
+    public Funcion(Funcion fun) {
+        this.parametros = fun.getParametros();
+        this.tableSimbol = fun.getTableSimbol();
+        this.nombre = fun.getNombre();
+        this.token = fun.getToken();
+        this.instruccions = fun.getInstruccions();
+        this.tipoRetono = fun.getTipoRetono();
     }
 
     @Override
@@ -72,17 +83,24 @@ public class Funcion extends Instruccions implements Serializable{
     }
 
     private void agregarParametroATableSimbol() {
-        this.parametros.forEach(para -> {
-            this.tableSimbol.getVariables().add(para);
-        });
+        ArrayList<String> valoresVistos = new ArrayList<>();
+        for (Variable parametro : parametros) {
+            if (valoresVistos.indexOf(parametro.getToken().getLexeme())!=-1) {
+                ErroresSingleton.getInstance().getErroresSemanticos().add(new ErrorSemantico(parametro.getToken(), "Nombre del parametro reptido :)"));
+                break;
+            }
+            valoresVistos.add(parametro.getToken().getLexeme());
+            this.tableSimbol.getVariables().add(parametro);
+        }
+//        this.parametros.forEach(para -> {
+//            this.tableSimbol.getVariables().add(para);
+//        });
     }
 
     private void agregarVarRetornoATableSimbol() {
         this.tableSimbol.getVariables().add(new Variable(token, tipoRetono, "varRetonoSimbolTable"));
     }
-    
-    
-    
+
     /*Espacio para getter y setters*/
     public ArrayList<Instruccions> getInstruccions() {
         return instruccions;
@@ -136,7 +154,5 @@ public class Funcion extends Instruccions implements Serializable{
     public String toString() {
         return "Funcion{" + "parametros=" + parametros + ", tableSimbol=" + tableSimbol + ", nombre=" + nombre + ", token=" + token + ", instruccions=" + instruccions + ", tipoRetono=" + tipoRetono + '}';
     }
-    
-    
 
 }

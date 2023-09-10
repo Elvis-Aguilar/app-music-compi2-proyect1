@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 
-public class TablaSimbol implements Serializable{
+public class TablaSimbol implements Serializable {
 
     private ArrayList<Token> ids = new ArrayList<>();
     private ArrayList<Variable> variables = new ArrayList<>();
@@ -45,7 +45,10 @@ public class TablaSimbol implements Serializable{
     public void capturarIds(Token id) {
         boolean capturar = true;
         if (this.ids.isEmpty()) {
-            ids.add(id);
+            if (!this.varYaDeclarada(id)) {
+                ids.add(id);
+            }
+
         } else {
             for (Token tok : ids) {
                 if (tok.getLexeme().equals(id.getLexeme())) {
@@ -88,7 +91,9 @@ public class TablaSimbol implements Serializable{
     public void capturarIdsArr(Token id) {
         boolean capturar = true;
         if (this.ids.isEmpty()) {
-            ids.add(id);
+            if (!this.arregloYaDeclarado(id)) {
+                ids.add(id);
+            }
         } else {
             for (Token tok : ids) {
                 if (tok.getLexeme().equals(id.getLexeme())) {

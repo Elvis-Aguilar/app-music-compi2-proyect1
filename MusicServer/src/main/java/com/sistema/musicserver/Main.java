@@ -4,6 +4,7 @@ package com.sistema.musicserver;
 import com.sistema.musicserver.UI.VentanaPrin;
 import com.sistema.musicserver.UI.VentanaPrincipal;
 import com.sistema.musicserver.archivos.ManejadorArchivos;
+import com.sistema.musicserver.conexion.SocketServidor;
 import com.sistema.musicserver.pista.Lista;
 import com.sistema.musicserver.pista.Pista;
 import com.sistema.musicserver.pista.PistasCompiladas;
@@ -22,6 +23,8 @@ public class Main {
         PistasCompiladas.getInstancePistasActivacion().setListas(listas);
         VentanaPrincipal vtn = new VentanaPrincipal();
         vtn.setVisible(true);
+//        SocketServidor conexionSoc = new SocketServidor();
+//        conexionSoc.IniciarServer();
 //        VentanaPrin vtn = new VentanaPrin();
 //        vtn.setVisible(true);
     }

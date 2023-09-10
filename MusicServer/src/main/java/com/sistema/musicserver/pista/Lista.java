@@ -71,6 +71,7 @@ public class Lista implements Serializable {
                 ErroresSingleton.getInstance().getErroresSemanticos().add(new ErrorSemantico(id, "El nombre de la pista se encuentra repetido en la declaracion"));
                 break;
             }
+            valoresVistos.add(id.getLexeme());
         }
 
         return reptido;

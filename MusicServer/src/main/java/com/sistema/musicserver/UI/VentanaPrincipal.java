@@ -784,7 +784,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         ErroresSingleton.getInstance().clear();
         try {
             parser.parse();
-            ErroresSingleton.getInstance().setErroresSemanticos(parser.getErrorsSemanticos());
+            ErroresSingleton.getInstance().getErroresSemanticos().addAll(parser.getErrorsSemanticos());
             this.ConsolaPistasjTextArea1.setText("");
             if (ErroresSingleton.getInstance().existenErrores(ConsolaPistasjTextArea1)) {
                 this.textoSalida();
@@ -800,7 +800,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Compilacion no Exitosa, revisar los detalles de los reportes de errores");
-            ErroresSingleton.getInstance().setErroresSemanticos(parser.getErrorsSemanticos());
+            ErroresSingleton.getInstance().getErroresSemanticos().addAll(parser.getErrorsSemanticos());
             this.ConsolaPistasjTextArea1.setText("Uff! se llego a un error critico en la compilacion: Revisa los reportes de errores, Semanticos, Lexicos y Sintancticos");
             //ex.printStackTrace();
         }

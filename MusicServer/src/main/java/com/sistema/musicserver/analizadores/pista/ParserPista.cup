@@ -138,7 +138,7 @@ comodin_pista ::= PISTA ID:pist                                                 
 comodin_extiende ::= EXTIENDE ID:id items_extiende:array                        {:ArrayList<Token> ids = (ArrayList<Token>) array; ids.add(id); RESULT = ids;:}
                 ;
 
-items_extiende ::= COMA ID:id items_extiende:array                              {:ArrayList<Token> ids = (ArrayList<Token>) array; ids.add(id);:}
+items_extiende ::= COMA ID:id items_extiende:array                              {:ArrayList<Token> ids = (ArrayList<Token>) array; ids.add(id); RESULT = ids;:}
                 |                                                               {:RESULT= new ArrayList<>();:}
                 ;
 
@@ -153,7 +153,7 @@ items_extiende ::= COMA ID:id items_extiende:array                              
 /*Gramatica para sentencia global  */
  sentencia_global ::=  def_variable
                     | asignacion_var
-                    | def_funciones:fun                                             {:pista.getFunciones().add((Funcion) fun);:}          
+                    | def_funciones:fun                                             {:pista.pushFuncion((Funcion) fun);:}          
                     | def_fun_principal:funPrin                                     {:pista.setFunPrincipal((Funcion) funPrin); :}                                          
                     | def_fun_arreglo
 
@@ -403,8 +403,8 @@ def_switch ::= SWITCH PARENTESISA ID:id PARENTESISC LLAVEA cases:arryC LLAVEC   
 terminales_switch ::= ID:val                                    {:RESULT = new Dato(false, (Token) val, TipoDato.ENTERO, val.getLexeme());;:}        
                 | NUM_ENTERO:val                                {:RESULT = new Dato(true, (Token) val, TipoDato.ENTERO);:}                                                           
                 | DECIMAL:val                                   {:RESULT = new Dato(true, (Token) val, TipoDato.DECIMAL);:}                                                 
-                | CONT_CARACTER:val                             {:RESULT = new Dato(true, (Token) val, TipoDato.CADENA);:}                                                     
-                | CONT_CADENA:val                               {:RESULT = new Dato(true, (Token) val, TipoDato.CHAR);:}                                                         
+                | CONT_CARACTER:val                             {:RESULT = new Dato(true, (Token) val, TipoDato.CHAR);:}                                                     
+                | CONT_CADENA:val                               {:RESULT = new Dato(true, (Token) val, TipoDato.CADENA);:}                                                         
                 | FALSO:val                                     {:RESULT = new Dato(true, (Token) val, TipoDato.BOOLEAN);:}                                                     
                 | VERDADERO:val                                 {:RESULT = new Dato(true, (Token) val, TipoDato.BOOLEAN);:}                                                     
                 ;
@@ -458,6 +458,8 @@ asignacion_iterador ::=  ID:val                        {:RESULT = new Operation(
 
 op_incremt_decremet_for ::= ID:id INCREMENT                        {:NodoOperation nodLeft = new NodoOperation(new Dato(false, (Token) id, TipoDato.ENTERO, id.getLexeme())); NodoOperation nodRight = new NodoOperation(new Dato(true, 1, TipoDato.ENTERO)); NodoOperation root = new NodoOperation(TipoOperacion.SUMA, nodLeft, nodRight ); RESULT = new Asignacion(new Operation(root), (Token) id, true);:}
                     | ID:id DECREMENT                              {:NodoOperation nodLeft = new NodoOperation(new Dato(false, (Token) id, TipoDato.ENTERO, id.getLexeme())); NodoOperation nodRight = new NodoOperation(new Dato(true, 1, TipoDato.ENTERO)); NodoOperation root = new NodoOperation(TipoOperacion.RESTA, nodLeft, nodRight); RESULT = new Asignacion(new Operation(root), (Token) id, true);:}
+                    | ID:id IGUAL asignacion:asig                                        {:RESULT = new Asignacion((Operation)asig, (Token)id, true);  :}
+                    | ID:id SUMA_IMPLICITA  terminales_increment_fun:nodRight                             {:NodoOperation nodLeft = new NodoOperation(new Dato(false, (Token) id, TipoDato.ENTERO, id.getLexeme())); NodoOperation root = new NodoOperation(TipoOperacion.SUMA, nodLeft, (NodoOperation) nodRight ); RESULT = new Asignacion(new Operation(root), (Token) id, true);:}
                     ;
 
 

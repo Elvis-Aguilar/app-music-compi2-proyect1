@@ -42,8 +42,39 @@ Pista algo1 {
     } 
 } 
 
+Pista pistaSwicht{
+    var cadena cadena1 = "hola";
+    Principal() {
+        switch(cadena1) {
+            caso "hol":
+            Mensaje("valor de la cadena no es: "+ cadena1);
+            salir
+            caso "hola":
+            Mensaje("valor de la cadena es : "+ cadena1);
+            salir
+            default:
+             Mensaje("salir: "+ cadena1);
+            salir
+        }
+    }
+}
 
 
+Pista pistaRecirsiva{
+    var entero num = 4;
+    Principal() {
+        var entero res = factorial(4);
+        Mensaje("El resultado de la operacion es: "+ res );
+    }
+
+    entero factorial(entero num){
+        si(num == 1 || num == 0){
+            retorna 1;
+        }sino{
+            retorna factorial(num-1);
+        }
+    }
+}
 
 
 Pista algo1 {
@@ -54,33 +85,44 @@ Pista algo1 {
     var entero arreglo arr10,arr20,arr30 [][]={{5,10,15},{20,25,30}};
 
     Principal() {
+         arr10[1][1] = 30+5;
         algo();
-        arr10[1][1] = 30+5;
+        
     }
     algo (){
         var cadena cades = "hola Elvis";
         var cadena cadess = "Adios Elvis";
-        Mensaje("la sentencia es: "+ (5 >= otro) +"  por lo tanto; ");
-        si(5 >= otro) {
+        Mensaje("la sentencia es: "+ (5 > otro) +"  por lo tanto; ");
+        si(5 > otro) {
             cade = cades;
+           var entero iter = 0;
+           mientras(2>iter){
+                Mensaje(cade+" "+iter);
+                iter++;
+                Mensaje(iter);
+            }
+            var entero rest = sum(arr10[1][1] ,2) + sum(2,1);
+            Mensaje("El resultado de la operacion es: "+ rest );
+        } sino si(5==otro) {
             var entero iter = 0;
             hacer {
                 Mensaje(cade);
                 iter++;
                 Mensaje(iter);
             }mientras(2>iter);
-            var entero rest = sum(5,2) + sum(2,1);
+            var entero rest = sum(arr10[1][1]-3,2) + sum(algo-5,5);
             Mensaje("El resultado de la operacion es: "+ rest );
-        } sino {
             cade = cadess;
             algo = 28;
             Mensaje(cade);
+        }sino {
+            Mensaje("El resultado de la operacion es: adiso fdsfsadf" );
         }
     } 
     entero sum(entero num1, entero num2){
         retorna num1+num2;
     } 
-} 
+}  
 Pista algo2 {
     var entero algo, otro = 2+5*7-1;
     var cadena cade = "hola mundo "+algo;
@@ -144,31 +186,29 @@ Pista algo2 {
 } 
 
 
-Pista algo2  {
-    var entero arreglo arr10,arr20,arr30 [][]={{5,10,15},{20,25,30}};
-}
 
-instrucciones.ejecutar
-listaPista.add algo2
    
          
-Pista algo1 {
+Pista eexti extiende algo1, nuevaPistas{
+
 
 
     Principal() {
-        
+        arr10[1][1] = 30+5;
+        algo();
+        Mensaje(ejecutarCancion());
     }
 
 }
 
-Pista nuevaPista {
+Pista nuevaPistas {
 
     Var Cadena texto = "Finnn";
 
     
 
     Cadena ejecutarCancion(){
-        Para(Var Entero i = 0; i < 3; i++){
+        Para(Var Entero i = 0; i < 3; i = i +1 ){
             Reproducir(Do, 2 * (i+1), 500, i);
             Reproducir(Sol, 2 * (i+1), 500, i);
             Reproducir(Sol, 2 * (i+1), 500, i);
@@ -231,4 +271,12 @@ Pista nuevaPista {
         Mensaje(ejecutarCancion());
     }
 
+}
+
+{
+    lista:
+    {
+        nombre: "fiesta",
+        pistas: [algo1, algo2, nuevaPistas]
+    }
 }

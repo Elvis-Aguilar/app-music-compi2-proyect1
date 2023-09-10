@@ -1,12 +1,13 @@
 package com.sistema.musicserver.errors;
 
 import com.sistema.musicserver.analizadores.Token;
+import java.io.Serializable;
 
 /**
  *
  * @author elvis_agui
  */
-public class Errors {
+public class Errors implements Serializable{
 
     protected Token token;
     protected String descripcion;

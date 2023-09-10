@@ -18,6 +18,7 @@ import com.sistema.musicserver.tablaSimbol.TablaSimbol;
 import com.sistema.musicserver.tablaSimbol.Variable;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Pista implements Serializable {
 
@@ -104,7 +105,7 @@ public class Pista implements Serializable {
                 continue;
             }
             if (comprobarTipos(parametros, funcion.getParametros(), id, funcion.getTableSimbol())) {
-                fun = funcion;
+                fun = new Funcion(funcion);
                 break;
             }
 
@@ -199,6 +200,21 @@ public class Pista implements Serializable {
                 this.funPrincipal.execute(errorsSemanticos);
             }
         }
+    }
+    
+    public void pushFuncion(Funcion fun){
+        boolean capturar = true;
+        for (Funcion funcione : funciones) {
+            if (funcione.getNombre().equals(fun.getNombre())) {
+                capturar = false;
+                this.errorsSemanticos.add(new ErrorSemantico(fun.getToken(), "Funcion ya existente, ya fue declarado anterioremte"));
+                break;
+            }
+        }
+        if (capturar) {
+            this.funciones.add(fun);
+        }
+
     }
 
     public void addInstruccion(Instruccions instruccion) {

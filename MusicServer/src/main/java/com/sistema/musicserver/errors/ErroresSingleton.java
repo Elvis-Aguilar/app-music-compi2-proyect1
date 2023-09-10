@@ -1,5 +1,6 @@
 package com.sistema.musicserver.errors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
@@ -8,7 +9,7 @@ import javax.swing.JTextArea;
  *
  * @author elvis_agui
  */
-public class ErroresSingleton {
+public class ErroresSingleton implements Serializable{
 
     private ArrayList<ErrorSintactico> erroresSintacticos = new ArrayList<>();
     private ArrayList<ErrorSemantico> erroresSemanticos = new ArrayList<>();
@@ -62,24 +63,18 @@ public class ErroresSingleton {
         return erroresSintacticos;
     }
 
-    public void setErroresSintacticos(ArrayList<ErrorSintactico> erroresSintacticos) {
-        this.erroresSintacticos = erroresSintacticos;
-    }
+   
 
     public ArrayList<ErrorSemantico> getErroresSemanticos() {
         return erroresSemanticos;
     }
 
-    public void setErroresSemanticos(ArrayList<ErrorSemantico> erroresSemanticos) {
-        this.erroresSemanticos = erroresSemanticos;
-    }
+    
 
     public ArrayList<ErrorLexicos> getErroresLexicos() {
         return erroresLexicos;
     }
 
-    public void setErroresLexicos(ArrayList<ErrorLexicos> erroresLexicos) {
-        this.erroresLexicos = erroresLexicos;
-    }
+    
 
 }

@@ -22,6 +22,7 @@ public class ManejadorArchivos {
         try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(nombreArchivo))) {
             salida.writeObject(pistas);
         } catch (IOException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error Guardar del archivo Binario, de las Pistas :(");
         }
     }
