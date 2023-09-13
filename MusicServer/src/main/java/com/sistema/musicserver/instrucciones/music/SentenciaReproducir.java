@@ -160,15 +160,15 @@ public class SentenciaReproducir extends Instruccions implements Serializable{
     private void agregarMilis(int milis) {
         if (milis <= 4000) {
             if (milis <= 500) {
-                this.notasCalculadas += "i";
-            } else if (milis <= 1000) {
                 this.notasCalculadas += "q";
+            } else if (milis <= 1000) {
+                this.notasCalculadas += "h";
             } else if (milis <= 2000) {
                 this.notasCalculadas += "h";
             } else if (milis <= 3000) {
                 String tmp = this.notasCalculadas;
                 this.notasCalculadas += "h ";
-                this.notasCalculadas += tmp + "q";
+                this.notasCalculadas += tmp + "h";
             } else if (milis <= 4000) {
                 this.notasCalculadas += "w";
             }
