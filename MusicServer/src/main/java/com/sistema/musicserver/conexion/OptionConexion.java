@@ -10,8 +10,10 @@ package com.sistema.musicserver.conexion;
  * @author elvis_agui
  */
 public enum OptionConexion {
-    LISTAS,
-    PETICION, 
-    ERRORES, 
-    JSON
+    LISTAS_COMPLETAS,
+    LISTAS_NOMBRE,
+    PISTAS_COMPLETAS,
+    PISTAS_NOMBRE,
+    OK,
+    ERROR
 }

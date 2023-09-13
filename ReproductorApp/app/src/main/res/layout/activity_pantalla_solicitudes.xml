@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A83ED"
+
+    tools:context=".PantallaSolicitudes">
+
+    <TextView
+        android:id="@+id/textMenuPrincipal"
+        android:layout_width="358dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="16dp"
+        android:autoText="false"
+        android:background="#6C24ED"
+        android:text="Solicitud de Listas Y pistas"
+        android:textAlignment="center"
+        android:textColor="#FBFAFA"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/areaText"
+        android:layout_width="375dp"
+        android:layout_height="263dp"
+        android:layout_marginBottom="412dp"
+        android:background="#03DFFB"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Ingresa las solicitud, basado en el Lenguaje de comunicacion"
+        android:inputType="textMultiLine"
+        android:textColor="#1636E6"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/ButtonSolListaPista"
+        android:layout_width="147dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="344dp"
+        android:onClick="enviarPeticion"
+        android:text="Enviar Solicitud"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/areaTextResult"
+        android:layout_width="386dp"
+        android:layout_height="220dp"
+        android:layout_marginBottom="116dp"
+        android:background="#03DFFB"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Resultado del servidor"
+        android:inputType="textMultiLine"
+        android:textColor="#1636E6"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/ButtonGoSelect"
+        android:layout_width="147dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="40dp"
+        android:onClick="goReproducir"
+        android:text="Reproducir Pistas"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

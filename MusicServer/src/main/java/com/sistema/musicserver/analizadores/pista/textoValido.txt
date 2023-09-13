@@ -280,3 +280,18 @@ Pista nuevaPistas {
         pistas: [algo1, algo2, nuevaPistas]
     }
 }
+
+
+<solicitud>
+    <tipo>Lista</tipo>
+    <nombre>"fiesta"</nombre>
+</solicitud>
+
+<solicitud>
+    <tipo>Pista</tipo>
+</solicitud>
+
+<solicitud>
+    <tipo>Pista</tipo>
+    <nombre>"nuevaPistas"</nombre>
+</solicitud>

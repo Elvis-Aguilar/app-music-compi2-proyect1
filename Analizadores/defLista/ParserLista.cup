@@ -1,0 +1,127 @@
+/*Seccion codigo Imports Package */
+package com.sistema.musicserver.analizadores.lista;
+
+import com.sistema.musicserver.analizadores.Token;
+import com.sistema.musicserver.errors.ErrorSintactico;
+import com.sistema.musicserver.errors.ErroresSingleton;
+import com.sistema.musicserver.pista.Lista;
+import java.util.ArrayList;
+import java.util.List;
+import java_cup.runtime.*;
+
+
+
+/* Codigo java del parser*/
+ parser code {:   
+
+    private Lista listaTmp = new Lista();
+
+ /* Connect this parser to a scanner!*/
+	public ParserLista(LexerLista analizadorLexico) {
+		super(analizadorLexico);
+	}
+
+    public Lista getLista(){
+        return listaTmp;
+    }
+
+
+        @Override
+        public void syntax_error(Symbol tok) {
+                String esperado = "Terminales de sentencias:  } ;";
+	    try{
+                List<Integer> lista=expected_token_ids();
+                if(!lista.isEmpty()){
+                       if(lista.get(0)<=50){
+                               esperado = sym.terminalNames[lista.get(0)];
+                        } 
+                }
+	        Token token = (Token) tok.value;
+                report_error("",null);
+                ErroresSingleton.getInstance().getErroresSintacticos().add(new ErrorSintactico(token, "No pertenece a la gramatica, en su lugar se esperaba: "+ esperado));
+
+            }catch(Exception e){
+                Token token = (Token) tok.value;
+                report_error("-----------",null);
+                ErroresSingleton.getInstance().getErroresSintacticos().add(new ErrorSintactico(token, "No pertenece a la gramatica, en su lugar se esperaba: "+ esperado));
+
+	    }	
+	}
+
+         @Override
+        public List<Integer> expected_token_ids() {
+                return super.expected_token_ids();
+        }
+
+
+    public void unrecovered_syntax_error(Symbol cur_token) {
+        if (cur_token.sym == sym.EOF) {
+             ErroresSingleton.getInstance().getErroresSintacticos().add(new ErrorSintactico(new Token("No recuperado", 1, 1), "Posiblemente no se encontro un } para la recuperacion adecuada"));
+        }else{
+             Token token = (Token) cur_token.value;
+             report_error("-----------",null);
+             ErroresSingleton.getInstance().getErroresSintacticos().add(new ErrorSintactico(token, "Token no pertenece a la gramatica y su recuperacion es incierta"));
+
+        }
+    }
+    
+:};
+
+
+
+/*seccion de Terminales*/ 
+terminal Token LLAVEA, LLAVEC, CORCHETA, CORCHETC, DOPUNTO, COMA, FALSO, NOMBRE, LISTA, RANDOM, CIRCULAR, PISTAS;
+terminal Token ID, CONT_CADENA, VERDADERO;
+
+
+/*seccion de No Terminales*/
+non terminal inicio, ids_recur, def_pistas, verd_falso, def_circular, def_random, def_atributos_opcionales, def_atributos_recur, cierr_def, def_atributos_list, def_lista;
+
+
+
+/* seccion de Gramatica */
+start with  inicio;
+
+
+inicio ::= def_lista                                                                            
+        | 
+        ;
+
+
+def_lista ::= LLAVEA LISTA DOPUNTO def_atributos_list LLAVEC               {:listaTmp.capturarLista();:}
+        ;
+
+def_atributos_list ::= LLAVEA NOMBRE DOPUNTO CONT_CADENA:nombre cierr_def  {:listaTmp.setNombre(nombre.getLexeme());:}
+            ;
+
+
+cierr_def ::= COMA def_atributos_recur LLAVEC
+                | LLAVEC
+                ;
+
+def_atributos_recur ::= def_atributos_opcionales COMA def_atributos_recur
+                        | def_atributos_opcionales
+                        ;
+
+def_atributos_opcionales ::= def_random
+                        | def_circular
+                        | def_pistas
+                        ;
+
+def_random ::=  RANDOM verd_falso:bool                   {:listaTmp.setRandom((boolean) bool);:}  
+            ;   
+
+def_circular ::= CIRCULAR verd_falso:bool            {:listaTmp.setCircular((boolean) bool);:}                      
+            ;
+
+verd_falso ::=  DOPUNTO VERDADERO       {:RESULT = true;:}        
+        | DOPUNTO FALSO                 {:RESULT = false;:}
+        ;
+
+def_pistas ::= PISTAS DOPUNTO CORCHETA ids_recur:ids CORCHETC           {:listaTmp.capturarIds((ArrayList<Token>) ids);:}   
+        ;
+
+
+ids_recur ::= ID:id COMA ids_recur:idss             {:ArrayList<Token> ids = (ArrayList<Token>)idss; ids.add(0,id); RESULT = idss;:}             
+        | ID:id                                     {:ArrayList<Token> ids = new ArrayList<>(); ids.add(id); RESULT= ids;:}
+        ;

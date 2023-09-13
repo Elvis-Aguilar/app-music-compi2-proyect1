@@ -11,6 +11,7 @@ public class CanalMusical implements Serializable{
     private int canal;
     private StringBuilder musicString = new StringBuilder();
     private int milisTotal = 0;
+    private static final long serialVersionUID = 6529685098267757690L;
 
     public CanalMusical(int canal, String musicString, int milisTotal) {
         this.canal = canal;

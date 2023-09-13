@@ -23,8 +23,9 @@ public class Main {
         PistasCompiladas.getInstancePistasActivacion().setListas(listas);
         VentanaPrincipal vtn = new VentanaPrincipal();
         vtn.setVisible(true);
-//        SocketServidor conexionSoc = new SocketServidor();
-//        conexionSoc.IniciarServer();
+        SocketServidor conexionSoc = new SocketServidor();
+        conexionSoc.setTexArea(vtn.getTex());
+        conexionSoc.IniciarServer();
 //        VentanaPrin vtn = new VentanaPrin();
 //        vtn.setVisible(true);
     }

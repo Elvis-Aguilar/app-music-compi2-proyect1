@@ -2,6 +2,9 @@
 //package ;
 package com.sistema.musicserver.analizadores.pista;
 import java_cup.runtime.*;
+import com.sistema.musicserver.errors.ErrorLexicos;
+import com.sistema.musicserver.errors.ErroresSingleton;
+import com.sistema.musicserver.analizadores.Token;
 
 %%
 /*segunda seccion configuracion*/
@@ -68,6 +71,8 @@ MODULO = "%"
 POTENCIA = "^"
 
 
+
+
 /*palabras reservadas*/
 PISTA = "pista"|"Pista"
 KEEP = "keep"|"Keep"
@@ -99,8 +104,27 @@ ORDENAR = "ordenar"|"Ordenar"
 SUMARIZAR = "sumarizar"|"Sumarizar"
 LONGITUD = "longitud"|"Longitud"
 MENSAJE = "mensaje"|"Mensaje"
-PRINCIPAL = "principal"|"Principal"
-ID = (({LETRA}|{DIGONALB})({LETRA}|{ENTERO}|{DIGONALB})*)
+PRINCIPAL = "principal"|"Principal"  
+ASCENDENTE = "ascendente"|"Ascendente"
+DESCENDENTE = "descendente"|"Descendente"
+PARES = "pares"|"Pares"
+IMPARES = "impares"|"Impares"
+PRIMOS = "primos"|"Primos"
+
+NOTA_DO = "Do"                                    
+NOTA_DO_S = "Do#"                                   
+NOTA_RE = "Re"                                  
+NOTA_RE_S = "Re#"                                   
+NOTA_MI = "Mi"                                    
+NOTA_FA = "Fa"                                    
+NOTA_FA_S = "Fa#"                                   
+NOTA_SOL = "Sol"                                  
+NOTA_SOL_S = "Sol#"                                  
+NOTA_LA = "La"                                    
+NOTA_LA_S = "La#"                                  
+
+
+ID = (({LETRA}|{DIGONALB})({LETRA}|{NUM_ENTERO}|{DIGONALB})*)
 
 
 /*apartado para comentarios*/
@@ -118,6 +142,27 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
     }
     private String cadena ="";
 
+    public String limpiarCaracter(String lexema){
+        if (lexema.length()>1) {
+            String cara = ""+lexema.charAt(1);
+            switch(cara){
+                case "n":
+                    lexema = "\n";
+                    break;
+                case "t":
+                    lexema = "\t";
+                    break;
+                case "r":
+                    lexema = "\r";
+                    break;
+                case "f":
+                    lexema = "\f";
+                    break;
+            }
+            lexema = cara;
+        }
+        return lexema;
+    }
     
 %}
 
@@ -157,7 +202,7 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 {AND}                   { return symbol(sym.AND,yytext());}
 {NAND}                  { return symbol(sym.NAND,yytext());}
 {NOR}                   { return symbol(sym.NOR,yytext());}
-{XOR}                   { return symbol(sym.ISNXORULO,yytext());}
+{XOR}                   { return symbol(sym.XOR,yytext());}
 {POR}                   { return symbol(sym.POR,yytext());}
 {DIVISION}              { return symbol(sym.DIVISION,yytext());}
 {MENOS}                 { return symbol(sym.MENOS,yytext());}
@@ -173,7 +218,7 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 {CARACTER}              { return symbol(sym.CARACTER,yytext());}
 {VERDADERO}             { return symbol(sym.VERDADERO,yytext());}
 {FALSO}                 { return symbol(sym.FALSO,yytext());}
-{CONT_CARACTER}         { return symbol(sym.CONT_CARACTER,yytext());}
+{CONT_CARACTER}         { return symbol(sym.CONT_CARACTER,limpiarCaracter(yytext()));}
 {CADENA}                { return symbol(sym.CADENA,yytext());}
 {VAR}                   { return symbol(sym.VAR,yytext());}
 {SINO}                  { return symbol(sym.SINO,yytext());}
@@ -196,10 +241,25 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 {PRINCIPAL}             { return symbol(sym.PRINCIPAL,yytext());}
 {DOPUNTO}               { return symbol(sym.DOPUNTO,yytext());}
 {ARREGLO}               { return symbol(sym.ARREGLO,yytext());}
-{ID}                   { return symbol(sym.ID,yytext());}
+{NOTA_DO}               {return symbol(sym.NOTA_DO,yytext());}                                  
+{NOTA_DO_S}             {return symbol(sym.NOTA_DO_S,yytext());}                                  
+{NOTA_RE}               {return symbol(sym.NOTA_RE,yytext());}                                
+{NOTA_RE_S}             {return symbol(sym.NOTA_RE_S,yytext());}                                  
+{NOTA_MI}               {return symbol(sym.NOTA_MI,yytext());}                                  
+{NOTA_FA}               {return symbol(sym.NOTA_FA,yytext());}                                  
+{NOTA_FA_S}             {return symbol(sym.NOTA_FA_S,yytext());}                                  
+{NOTA_SOL}              {return symbol(sym.NOTA_SOL,yytext());}                                 
+{NOTA_SOL_S}            {return symbol(sym.NOTA_SOL_S,yytext());}                                  
+{NOTA_LA}               {return symbol(sym.NOTA_LA,yytext());}                                  
+{NOTA_LA_S}             {return symbol(sym.NOTA_LA_S,yytext());}  
+{ASCENDENTE}            {return symbol(sym.ASCENDENTE,yytext());}      
+{DESCENDENTE}           {return symbol(sym.DESCENDENTE,yytext());}      
+{PARES}                 {return symbol(sym.PARES,yytext());} 
+{IMPARES}               {return symbol(sym.IMPARES,yytext());}  
+{PRIMOS}                {return symbol(sym.PRIMOS,yytext());}                                 
 {COMMET}                { /*return symbol(sym.COMMET,yytext());*/}
-{COMILLAS}              {yybegin(CADE);}
-
+{ID}                    { return symbol(sym.ID,yytext());}
+{COMILLAS}              {cadena = ""; yybegin(CADE);}
 
 }
 
@@ -209,4 +269,4 @@ COMMET = ({TraditionalComment} | {EndOfLineComment} | {DocumentationComment})
 
 }
 
-[^] {System.out.println("error lexico "+ yytext());}
+[^] {ErroresSingleton.getInstance().getErroresLexicos().add(new ErrorLexicos(new Token(yytext(), yyline+1, yycolumn+1), "El Token no es reconocido por el lenguaje"));}

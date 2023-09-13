@@ -1,0 +1,117 @@
+/*Seccion codigo Imports Package */
+package com.example.reproductorapp.analizadores;
+
+import com.example.reproductorapp.objects.*;
+import java.util.ArrayList;
+import java.util.List;
+import java_cup.runtime.*;
+
+
+
+/* Codigo java del parser*/
+ parser code {:   
+
+    OptionConexion tipoSolicitud;
+    String nombreSol = "";
+    
+
+ /* Connect this parser to a scanner!*/
+	public ParserSolicitud(LexerSolicitud analizadorLexico) {
+		super(analizadorLexico);
+	}
+
+
+      public OptionConexion getTipoSolicitud(){
+        if (tipoSolicitud == OptionConexion.PISTAS_COMPLETAS){
+            if (nombreSol != ""){
+                tipoSolicitud = OptionConexion.PISTAS_NOMBRE;
+            }
+        }else{
+            if (nombreSol != ""){
+                tipoSolicitud = OptionConexion.LISTAS_NOMBRE;
+            }
+        }
+        return tipoSolicitud;
+      }
+
+          public String getNombreSol() {
+        return nombreSol;
+    }
+
+
+        @Override
+        public void syntax_error(Symbol tok) {
+                String esperado = "Terminales de sentencias:  > ;";
+	    try{
+                List<Integer> lista=expected_token_ids();
+                if(!lista.isEmpty()){
+                       if(lista.get(0)<=50){
+                               esperado = sym.terminalNames[lista.get(0)];
+                        } 
+                }
+	        Token token = (Token) tok.value;
+                report_error("",null);
+                ErrorSingleton.getInstance().getErrores().add(new Errores("No pertenece a la gramatica, en su lugar se esperaba: " + esperado, TipoError.SINTACTICO, token));
+
+            }catch(Exception e){
+                Token token = (Token) tok.value;
+                report_error("-----------",null);
+                ErrorSingleton.getInstance().getErrores().add(new Errores("No pertenece a la gramatica, en su lugar se esperaba: " + esperado, TipoError.SINTACTICO, token));
+	    }	
+	}
+
+         @Override
+        public List<Integer> expected_token_ids() {
+                return super.expected_token_ids();
+        }
+
+
+    public void unrecovered_syntax_error(Symbol cur_token) {
+        if (cur_token.sym == sym.EOF) {
+            ErrorSingleton.getInstance().getErrores().add(new Errores("Posiblemente no se encontro un > para la recuperacion adecuada", TipoError.SINTACTICO, new Token("No recuperado", 1, 1)));
+        }else{
+             Token token = (Token) cur_token.value;
+             report_error("-----------",null);
+            ErrorSingleton.getInstance().getErrores().add(new Errores("Token no pertenece a la gramatica y su recuperacion es incierta", TipoError.SINTACTICO, new Token("No recuperado", 1, 1)));
+
+        }
+    }
+    
+:};
+
+
+
+/*seccion de Terminales*/ 
+terminal Token BRACKETA, BRACKETC, BRACKET_TERMINAL, NOMBRE, SOLICITUD, TIPO, LISTA, PISTA, CONT_CADENA;
+
+
+/*seccion de No Terminales*/
+non terminal inicio, def_solicitud, estruc_solicitud, tipo_solicitud, nombre_opcional;
+
+
+
+
+/* seccion de Gramatica */
+start with  inicio;
+
+
+inicio ::= def_solicitud                                                                            
+        | 
+        ;
+
+def_solicitud ::= BRACKETA SOLICITUD BRACKETC    estruc_solicitud   BRACKET_TERMINAL SOLICITUD BRACKETC 
+            ;   
+
+
+estruc_solicitud ::=  BRACKETA TIPO BRACKETC tipo_solicitud  BRACKET_TERMINAL TIPO BRACKETC nombre_opcional
+                ;
+
+
+tipo_solicitud ::=  LISTA                   {:tipoSolicitud = OptionConexion.LISTAS_COMPLETAS;:}
+                | PISTA                     {:tipoSolicitud = OptionConexion.PISTAS_COMPLETAS;:}
+                ;
+
+
+nombre_opcional ::= BRACKETA NOMBRE BRACKETC  CONT_CADENA:name BRACKET_TERMINAL NOMBRE BRACKETC  {:nombreSol = name.getLexeme();:}
+                |
+                ;

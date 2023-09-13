@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#798CF4"
+
+    tools:context=".PantallaConfig">
+    <TextView
+        android:id="@+id/textPrincipal"
+        android:layout_width="379dp"
+        android:layout_height="98dp"
+        android:layout_marginTop="16dp"
+        android:autoText="false"
+        android:background="#2196F3"
+        android:text="  Configuracion de Conexion, ingrese la ip de conexion"
+        android:textColor="#050505"
+        android:textSize="27sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextContrastCheck" />
+
+
+    <EditText
+        android:id="@+id/extconfig"
+        android:layout_width="351dp"
+        android:layout_height="69dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text=" ejemplo: 192.168.0.110"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.352"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.327" />
+
+    <Button
+        android:id="@+id/ButtonConfig"
+        android:layout_width="147dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="300dp"
+        android:onClick="cambiarIp"
+        android:text="Confirmar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

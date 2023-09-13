@@ -10,6 +10,7 @@ import com.sistema.musicserver.analizadores.lista.ParserLista;
 import com.sistema.musicserver.analizadores.pista.LexerPista;
 import com.sistema.musicserver.analizadores.pista.parser;
 import com.sistema.musicserver.archivos.ManejadorArchivos;
+import com.sistema.musicserver.conexion.SocketServidor;
 import com.sistema.musicserver.errors.ErroresSingleton;
 import com.sistema.musicserver.instrucciones.funciones.FunMensaje;
 import com.sistema.musicserver.instrucciones.music.HiloReproductorDePista;
@@ -19,6 +20,10 @@ import com.sistema.musicserver.pista.Lista;
 import com.sistema.musicserver.pista.PistasCompiladas;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -120,6 +125,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jScrollPane6 = new javax.swing.JScrollPane();
         LenguajeListasjTextArea = new javax.swing.JTextArea();
         jButton2 = new javax.swing.JButton();
+        jPanel13 = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        statusSolicitudes = new javax.swing.JTextArea();
+        jButton3 = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         CrearPistajMenuItem = new javax.swing.JMenuItem();
@@ -656,6 +667,66 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Editor codigo Listas", jPanel11);
 
+        jPanel13.setBackground(new java.awt.Color(153, 153, 255));
+
+        statusSolicitudes.setBackground(new java.awt.Color(255, 255, 255));
+        statusSolicitudes.setColumns(20);
+        statusSolicitudes.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        statusSolicitudes.setForeground(new java.awt.Color(0, 0, 0));
+        statusSolicitudes.setRows(5);
+        jScrollPane7.setViewportView(statusSolicitudes);
+
+        jButton3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jButton3.setText("Activar Servidor");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel6.setText("Activar el servidor para solicitudes del Cliente");
+
+        jLabel10.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel10.setText("Bitacora de solicitudes y respuestas!!");
+
+        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
+        jPanel13.setLayout(jPanel13Layout);
+        jPanel13Layout.setHorizontalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel13Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 1210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel13Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel13Layout.createSequentialGroup()
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 618, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(82, 82, 82)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(33, Short.MAX_VALUE))
+        );
+        jPanel13Layout.setVerticalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
+        );
+
+        jTabbedPane1.addTab("Servicio", jPanel13);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -1032,9 +1103,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        try {
+            String hostAddress = InetAddress.getLocalHost().getHostAddress();
+            statusSolicitudes.setText("Servicio inicializado IP: "+hostAddress+"\n\n");
+        } catch (UnknownHostException ex) {
+            
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     public void textoSalida() {
         String contenido = FunMensaje.getInstanceMensajes().getContenido();
         this.ConsolaPistasjTextArea1.setText(contenido);
+    }
+    
+    public javax.swing.JTextArea getTex(){
+        return statusSolicitudes;
     }
 
 
@@ -1053,12 +1138,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton eliminarPistadeListajButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1079,6 +1167,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1093,6 +1182,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton modificarListajButton;
     private javax.swing.JList<String> modificarListajList;
@@ -1100,6 +1190,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JList<String> pistasExistentesjList;
     private javax.swing.JList<String> pistasListaReprojList;
     private javax.swing.JButton reproducirListajButton;
+    private javax.swing.JTextArea statusSolicitudes;
     private javax.swing.JLabel titlepistaModifjLabel;
     // End of variables declaration//GEN-END:variables
 }
