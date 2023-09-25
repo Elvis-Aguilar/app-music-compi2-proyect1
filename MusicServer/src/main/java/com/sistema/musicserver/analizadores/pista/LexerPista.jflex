@@ -55,12 +55,13 @@ DECREMENT="--"
 
 
 /*opreadores logicos*/
-NOT = "!"
+
 OR="||"
 AND="&&"
 NAND="!&&"
 NOR = "!||"
 XOR = "&|"
+NOT = "!"
 
 /*operadores aritmeticos*/
 POR = "*"

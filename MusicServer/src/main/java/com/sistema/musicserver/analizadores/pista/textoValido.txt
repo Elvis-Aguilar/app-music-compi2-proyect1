@@ -21,7 +21,7 @@ Pista algo1 {
                 iter++;
                 Mensaje(iter);
             }mientras(2>iter);
-            var entero rest = sum(5,2) + sum(2,1);
+            var entero rest = sum(5,2,1) + sum(2,1,1);
             Mensaje("El resultado de la operacion es: "+ rest );
             Reproducir(Do,5, 1000,5);
             Reproducir(Re,4, 1500,3);
@@ -37,8 +37,8 @@ Pista algo1 {
             Mensaje(cade);
         }
     } 
-    entero sum(entero num1, entero num2){
-        retorna num1+num2;
+    entero sum(entero num1, entero num2, entero num3){
+        retorna num1+num2+num3;
     } 
 } 
 
@@ -271,6 +271,88 @@ Pista nuevaPistas {
         Mensaje(ejecutarCancion());
     }
 
+}
+
+Pista algo1ss {
+    var entero algo, otro = 2+5*7-1;
+    var cadena cade = "hola mundo "+algo;
+    var boolean conditi = verdadero;
+    var entero arreglo arr10,arr20,arr30 [][]={{5,10,15},{20,25,30}};
+
+    Principal() {
+        algo();
+       reproducirMelodia(6,1000,3,1000);
+        arr10[1][1] = 30+5;
+    }
+    algo (){
+        otro = 5;
+        var cadena cades = "hola Elvis";
+        var cadena cadess = "Adios Elvis";
+        Mensaje("la sentencia es: "+ (5 >= otro) +"  por lo tanto; ");
+        si(5 >= otro) {
+            cade = cades;
+            var entero iter = 0;
+            hacer {
+                Mensaje(cade);
+                iter++;
+                Mensaje(iter);
+            }mientras(2>iter);
+            var entero rest = sum(5,2,1) + sum(2,1,1);
+            Mensaje("El resultado de la operacion es: "+ rest );
+            Reproducir(Do,5, 1000,5);
+            Reproducir(Re,4, 1500,3);
+            Esperar(200,5);
+            Reproducir(Re,4, 1500,3);
+            Reproducir(Mi,6, 3500,5);
+            Reproducir(Sol,7, 1500,2);
+            Esperar(200,3);
+            Reproducir(Fa,5, 500,3);
+        } sino {
+            cade = cadess;
+            algo = 28;
+            Mensaje(cade);
+        }
+    } 
+    entero sum(entero num1, entero num2, entero num3){
+        retorna num1+num2+num3;
+    } 
+	keep entero reproducirMelodia(entero octava, entero tiempo, entero canal, entero espera) {
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Mi,octava, tiempo,canal);
+		Esperar(espera, canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Re,octava, tiempo,canal);
+		Esperar(espera, canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Fa,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Fa,octava, tiempo,canal);
+		Reproducir(Re,octava, tiempo,canal);
+		Esperar(espera, canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Fa,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Fa,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Mi,octava, tiempo,canal);
+		Esperar(espera, canal);
+retorna 5;
+	}
 }
 
 {

@@ -1,0 +1,15 @@
+Notas del texto de entrada
+
+expresion !((44+6!=4) &| (1+2>60)); no valida en su lugar (44+6!=4) &| (1+2>60);
+
+expresion no valida a = nums[index]; en su lugar a = nums[2]; no valida la variable por lo que la variable tiene que ser global
+
+
+expresion no valida (parar) !|| (verdadero); en su luagar (parar) || (verdadero);
+
+funciones 
+si tiene parametros tiene que tener si o si tipo de retorno
+
+expesion tiempo += (4565/15)/10; no valida en su lugar tiempo += 10;
+
+no compara boolean con booleano true == true no valido xd

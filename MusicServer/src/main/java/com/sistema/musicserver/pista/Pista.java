@@ -92,7 +92,7 @@ public class Pista implements Serializable {
         }
     }
 
-    public Funcion getFuncionEspecifica(Token id, ArrayList<Operation> parametros, boolean conRetorno) {
+    public Funcion getFuncionEspecifica(Token id, ArrayList<Operation> parametros, boolean conRetorno, TablaSimbol tablapadre) {
         Funcion fun = null;
         for (Funcion funcion : funciones) {
             if (!id.getLexeme().equals(funcion.getNombre())) {
@@ -104,7 +104,7 @@ public class Pista implements Serializable {
             if (funcion.getParametros().size() != parametros.size()) {
                 continue;
             }
-            if (comprobarTipos(parametros, funcion.getParametros(), id, funcion.getTableSimbol())) {
+            if (comprobarTipos(parametros, funcion.getParametros(), id, tablapadre, funcion.getTableSimbol())) {
                 fun = new Funcion(funcion);
                 break;
             }
@@ -117,7 +117,7 @@ public class Pista implements Serializable {
         return fun;
     }
 
-    public boolean comprobarTipos(ArrayList<Operation> parametros, ArrayList<Variable> varParametros, Token id, TablaSimbol tabla) {
+    public boolean comprobarTipos(ArrayList<Operation> parametros, ArrayList<Variable> varParametros, Token id, TablaSimbol tabla, TablaSimbol tablaFun) {
         boolean conciden = true;
         int index = 0;
         for (Variable varParametro : varParametros) {
@@ -126,7 +126,7 @@ public class Pista implements Serializable {
                 conciden = false;
                 break;
             }
-            tabla.asignacionValorVariable(dato, varParametro.getToken());
+            tablaFun.asignacionValorVariable(dato, varParametro.getToken());
             index++;
         }
         return conciden;

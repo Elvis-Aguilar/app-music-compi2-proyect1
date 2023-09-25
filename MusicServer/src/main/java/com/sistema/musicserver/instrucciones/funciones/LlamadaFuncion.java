@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class LlamadaFuncion extends Instruccions implements Serializable{
 
     private NodoOperation rootOperation;
+    private TablaSimbol tabla;
 
     public LlamadaFuncion(NodoOperation rootOperation) {
         this.rootOperation = rootOperation;
@@ -24,12 +25,12 @@ public class LlamadaFuncion extends Instruccions implements Serializable{
     @Override
     public void execute(ArrayList<ErrorSemantico> errorsSemanticos) {
         this.rootOperation.setRetorna(false);
-        this.rootOperation.executeOp(errorsSemanticos, null);
+        this.rootOperation.executeOp(errorsSemanticos, tabla);
     }
 
     @Override
     public void actionReferenciarTabla(TablaSimbol tabla) {
-
+        this.tabla = tabla;
     }
 
     public NodoOperation getRootOperation() {

@@ -57,7 +57,7 @@ public class NodoOperation implements Serializable{
     public Dato executeOp(ArrayList<ErrorSemantico> errorsSemanticos, TablaSimbol tabla) {
         Dato tmp = this.dato;
         if (funcion) {
-            Funcion fun = pista.getFuncionEspecifica(tokenFun, parametros, retorna);
+            Funcion fun = pista.getFuncionEspecifica(tokenFun, parametros, retorna, tabla);
             if (fun != null) {
                 fun.execute(errorsSemanticos);
                 if (!fun.getTableSimbol().getVariables().isEmpty()) {
