@@ -1,0 +1,101 @@
+>> Projecto 1, Compiladores 2 - 2023
+
+Pista pistaNumeroUno {
+	var cadena cadena1 = "Hello";
+	var cadena cadena2 = "World!";
+
+	Principal() {
+		Mensaje(cadena1 + ", " + cadena2); >> Hello, World!
+		var entero entero1 = func1();
+		Mensaje("El resultado es: " + entero1); >> El resultado es: 2
+	}
+
+	entero func1() {
+		Mensaje("Hello from func1");
+		retorna 1 + 1;
+	}
+}
+
+
+
+Pista pistaNumeroDos {
+	var entero contador = 10;
+
+	Principal() {
+		mientras(contador > 0) {
+			Mensaje("Bucle while: " + contador);
+			contador--;
+		}
+
+		hacer {
+			Mensaje("Bucle hacer-mientras: " + contador);
+			contador++;
+		} mientras(contador < 10);
+
+		si (contador == 10) {
+			Mensaje("El valor de contador es: " + contador);
+		}
+
+		imprimirArreglo();
+		Mensaje("Duracion: " + reproducirNotas());
+	}
+
+	entero reproducirNotas() {
+		var entero duracion = 0;
+		duracion =  duracion+Reproducir(Do, 5, 1500, 2);
+		duracion = duracion+Reproducir(Re, 5, 1500, 2);
+		duracion = duracion+Reproducir(Mi, 5, 1500, 2);
+		duracion = duracion+Reproducir(Fa, 5, 1500, 2);
+		duracion = duracion+Reproducir(Sol, 5, 1500, 2);
+		duracion = duracion+Reproducir(La, 5, 1500, 2);
+		duracion = duracion+Reproducir(Si, 5, 1500, 2);
+		retorna duracion;
+	}
+
+	imprimirArreglo() {
+		var entero len = 10;
+		var entero arreglo nums[len];
+		var entero a = 0;
+		var entero b = 1;
+		var entero index=0;
+		para(index = 0; index < len; index++) {
+			nums[index] = b;
+			b = a + b;
+			a = nums[index];
+			Mensaje("Valores es : "+nums[index]+" , "+ b +"  , "+ a);
+		}
+
+		Mensaje("Valores en arreglo:");
+		para (index = 0; index < len; index++) {
+			Mensaje("nums[ " + index + " ] = " + nums[index]);>> nums[ 0 ] = 1, ..., nums[9] = 55
+		}
+	}
+}
+
+Pista pistaNumeroTres {
+	var entero arreglo arr0[][] = {{0,1,2,3,4}, {5,6,7,8,9}};
+		var entero i = 0;
+		var entero j =0;
+	Principal() {
+		Mensaje("Elementos del arreglo de 2 dimensiones:");
+
+		var cadena cadena1 = "";
+
+		para( i = 0; i < 2; i++) {
+			para ( j = 0; j < 5; j++) {
+				cadena1 = cadena1+(""+arr0[i][j]+ "#t");
+			}
+			Mensaje(cadena1);
+			cadena1 = "";
+		}
+
+		para(i = 0; i < 2; i++) {
+			para (j = 0; j < 5; j++) {
+				arr0[i][j] = 1000 * (arr0[i][j] + 1);
+			}
+		}
+
+		Reproducir(Do, 6, arr0[1][4], 4);
+	}
+}
+

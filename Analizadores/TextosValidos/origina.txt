@@ -1,0 +1,141 @@
+Pista MelodiaPrincipal {
+	>> melodia principal para extension de otras, [Esta no cuenta con metodo principal]
+	Keep var cadena artista, genero;
+	Keep var entero duracionExacta = 60;
+	var boolean  parar = !((44.76+6.92!=4) &| (1+2.5>60));
+	Keep boolean continuarr = (parar) !|| (!!duracionExacta);
+
+	Keep var entero contador = 1;
+	Keep var boolean bandera, permitido = verdadero;
+
+	artista = "Ludvin #n ."De Piere" & Roami";
+	genero = "Orquesta";
+	
+	<- sonataModo1, sonataModo2, sonataModo3: Estos metodos pretenden crear una melodia de fondo
+		indicando:
+			* el numero de veces de reproduccion,
+			* el tiempo principal, 
+			* la octava de las notas,
+			* el canal de reproduccion
+			* y la espera en cada reproduccion de la melodia
+	->
+
+	Keep entero sonataModo1(entero veces,entero tiempo,entero octava,entero canal,entero espera) {
+		>> metadata de la melodia
+		desplegarMetadata(artista, genero, duracionExacta);
+
+		>> con ciclo mientras
+		mientras (permitido == verdadero) {
+			si (bandera == verdadero) {
+				Esperar(espera, canal);   >> la primera iteracion entra aqui
+				tiempo += (2*5*10*10)/10; >> aumenta una decima de segundo en primer iteracion
+			} sino {
+				reproducirMelodia(octava, tiempo, canal, espera);
+				Esperar(espera,canal);
+				tiempo +=(10*5)*2;   >> aumenta una decima de segundo en cada iteracion
+			}
+			bandera= !(bandera);  >> bandera pasa a ser falso
+			contador++;  >> contador aumenta en 1
+			si (contador >= veces) {   >> si contador llega al limite de veces en reproducir
+				permitido=falso;	  >> romper ciclo
+				contador--;	>> contador -1
+			}
+		}
+		retorna (tiempo + 1);  >> retorna el tiempo total transcurrido de la melodia + 1 
+		
+	}
+	
+	Keep entero sonataModo2(entero veces,entero tiempo,entero octava,entero canal,entero espera) {
+		>> metadata de la melodia
+		desplegarMetadata(artista, genero, duracionExacta);
+
+		>> con ciclo hacer mientras
+		hacer {
+			si (bandera == verdadero) {
+				Esperar(espera, canal);   >> la primera iteracion entra aqui
+				tiempo += (2*5*10*10)/10; >> aumenta una decima de segundo en primer iteracion
+				continuar; >> solo continua
+			} sino {
+				reproducirMelodia(octava, tiempo, canal, espera);
+				Esperar(espera,canal);
+				tiempo +=(10*5)*2 ;  >> aumenta una decima de segundo en cada iteracion
+			}
+			bandera= !(bandera);  >> bandera pasa a ser falso
+			contador++;  >> contador aumenta en 1
+			si (contador >= veces) {   >> si contador llega al limite de veces en reproducir
+				permitido=falso;	  >> romper ciclo
+				contador--;	>> contador -1
+   			}
+		} mientras(permitido == verdadero);
+		retorna (tiempo + 1);  >> retorna el tiempo total transcurrido de la melodia + 1
+	}
+
+	Keep entero sonataModo3(entero veces,entero tiempo,entero octava,entero canal,entero espera) {
+		>> metadata de la melodia
+		desplegarMetadata(artista, genero, duracionExacta);
+
+		>> con ciclo para
+		para(contador2 =1; contador2 >= veces; contador2++) {
+			si (bandera == verdadero) {
+				Esperar(espera, canal);   >> la primera iteracion entra aqui
+				tiempo += (2*5*10*10)/10; >> aumenta una decima de segundo en primer iteracion
+			} sino {
+				reproducirMelodia(octava, tiempo, canal, espera);
+				Esperar(espera,canal);
+				tiempo +=(10*5)*2 ;  >> aumenta una decima de segundo en cada iteracion
+			}
+			bandera= !(bandera);  >> bandera pasa a ser falso
+		
+			si (contador2 == (veces-1)) {  >> forzamos la salida antes de llegar a la condicion
+				contador2--;	>> contador2 -1
+				salir	;	  >> romper ciclo
+			}
+		}
+		retorna (tiempo + 1);  >> retorna el tiempo total transcurrido de la melodia + 1
+	}
+
+	Keep reproducirMelodia(entero octava, entero tiempo, entero canal, entero espera) {
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Mi,octava, tiempo,canal);
+		Esperar(espera, canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Si,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Re,octava, tiempo,canal);
+		Esperar(espera, canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Fa,octava, tiempo,canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Fa,octava, tiempo,canal);
+		Reproducir(Re,octava, tiempo,canal);
+		Esperar(espera, canal);
+		Reproducir(La,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Fa,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Fa,octava, tiempo,canal);
+		Reproducir(Sol,octava, tiempo,canal);
+		Reproducir(Mi,octava, tiempo,canal);
+		Esperar(espera, canal);
+	}
+	
+	Keep desplegarMetadata(cadena artista, cadena genero, entero duracionExacta) {
+		Mensaje("Artista: "+artista);
+		Mensaje("Genero: "+genero);
+		Mensaje("Duracion exacta: "+duracionExacta+" segundos");
+		
+	}
+		
+}
